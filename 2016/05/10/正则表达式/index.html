@@ -1,0 +1,775 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+
+    <title>正则表达式 | 杨理清的技术博客</title>
+    <meta name="author" content="Eric Yang">
+    
+    <meta name="description" content="正则表达式-语法
+限定符
+限定符用来指定正则表达式中的一个给定组件必须要出现多少次才能满足匹配。有*或+或？或{n}或{n，}或{n，m}共6种。
+
+
+：匹配前面的子表达式零次或多次。等价于{0，}。
+
+
++：匹配前面的子表达式一次或多次。等价于{1，}。
+？：匹配前面的子表达式零次或一次。等价于{0,1}。
+{n}：n是一个非负整数。匹配确定的n次。
+{n，}：n是一个非负整数。至少匹配n次。
+{n，m}：m和n均为非负整数，其中n&amp;lt;=m。最好匹配n次且最多匹配m次。请注意在逗号和两个数之间不能有空格。">
+    
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta property="og:title" content="正则表达式"/>
+    <meta property="og:site_name" content="Hello Eric’world!!"/>
+
+    
+    <meta property="og:image" content="undefined"/>
+    
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="alternate" href="/atom.xml" title="Hello Eric’world!!" type="application/atom+xml">
+    <link rel="stylesheet" href="/css/lib/materialize.min.css">
+    <link rel="stylesheet" href="/css/lib/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+
+    
+        <link rel="stylesheet" href="/css/lib/prettify-tomorrow-night-eighties.css" type="text/css">
+    
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+
+<body>
+    <img src="/weixin_favicon.png" style="position: absolute; left: -9999px; opacity: 0; filter: alpha(opacity=0);">
+
+    <nav class="indigo">
+    <div class="nav-wrapper">
+        <a href="#" data-activates="main-menu" class="button-collapse">
+            <i class="fa fa-navicon"></i>
+        </a>
+        <div class="">
+            <a href="/" class="brand-logo hide-on-med-and-down">Hello Eric’world!!</a>
+            <ul class="right hide-on-med-and-down">
+                
+                    <li>
+                        <a class="menu-home " href="/" >
+                            <i class="fa fa-home "></i>
+                            
+                            首页
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-archive " href="/archives" >
+                            <i class="fa fa-archive "></i>
+                            
+                            归档
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                            <i class="fa fa-bookmark "></i>
+                            
+                            分类
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-reading " href="/reading" >
+                            <i class="fa fa-book "></i>
+                            
+                            读书
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-about " href="/about" >
+                            <i class="fa fa-user "></i>
+                            
+                            关于
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-search modal-trigger " href="#search" >
+                            <i class="fa fa-search "></i>
+                            
+                            搜索
+                        </a>
+                    </li>
+                
+            </ul>
+            <div>
+    <ul class="side-nav indigo darken-1" id="main-menu">
+        
+        <li class="side-user">
+            <div class="row">
+                <div class="col s4 no-padding">
+                    <img class="avatar-image circle responsive-img" src="http://ww2.sinaimg.cn/small/74990035jw1f1rjkd681bj20rs0rsdhg.jpg" alt="User Avatar">
+                </div>
+                <div class="info col s8 valign-wrapper no-padding">
+                    <div class="valign">
+                        <p class="name">杨理清</p>
+                        <p class="desc">Java/android/技术宅</p>
+                    </div>
+                </div>
+            </div>
+        </li>
+        
+
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-home " href="/" >
+                    <i class="fa fa-home "></i>
+                    
+                    首页
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-archive " href="/archives" >
+                    <i class="fa fa-archive "></i>
+                    
+                    归档
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                    <i class="fa fa-bookmark "></i>
+                    
+                    分类
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-reading " href="/reading" >
+                    <i class="fa fa-book "></i>
+                    
+                    读书
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-about " href="/about" >
+                    <i class="fa fa-user "></i>
+                    
+                    关于
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-search modal-trigger " href="#search" >
+                    <i class="fa fa-search "></i>
+                    
+                    搜索
+                </a>
+            </li>
+        
+    </ul>
+
+    <ul class="side-nav indigo darken-1" id="category-menu">
+    
+
+            
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/技术/">
+                    技术 <span class="right">7 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-1" collapse-level="1">
+                <a class="no-padding" href="/categories/技术/工具/">
+                    工具 <span class="right">3 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-2" collapse-level="2">
+                <a class="no-padding" href="/categories/技术/工具/Hexo/">
+                    Hexo <span class="right">1 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-2" collapse-level="2">
+                <a class="no-padding" href="/categories/技术/工具/IDE/">
+                    IDE <span class="right">2 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-1" collapse-level="1">
+                <a class="no-padding" href="/categories/技术/移动开发/">
+                    移动开发 <span class="right">1 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-2" collapse-level="2">
+                <a class="no-padding" href="/categories/技术/移动开发/Android/">
+                    Android <span class="right">1 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-1" collapse-level="1">
+                <a class="no-padding" href="/categories/技术/综合/">
+                    综合 <span class="right">1 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-2" collapse-level="2">
+                <a class="no-padding" href="/categories/技术/综合/正则表达式/">
+                    正则表达式 <span class="right">1 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-1" collapse-level="1">
+                <a class="no-padding" href="/categories/技术/Android/">
+                    Android <span class="right">1 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-1" collapse-level="1">
+                <a class="no-padding" href="/categories/技术/数据库/">
+                    数据库 <span class="right">1 篇</span></a>
+                </a>
+            </li>
+
+        
+
+    </ul>
+</div>
+
+        </div>
+    </div>
+</nav>
+
+<div id="search" class="modal search-modal">
+    <div class="row">
+        <div class="input-field col s12">
+              <input id="search-input" type="text">
+              <label for="search-input">搜索</label>
+        </div>
+
+    </div>
+    <div id="search-result" class="search-result col s12">
+
+    </div>
+</div>
+
+
+    <main>
+        <div class="container main-container">
+    <nav class="page-nav hide-on-small-only">
+    <div class="nav-wrapper indigo">
+        <span class="breadcrumb">当前位置（分类目录）</span>
+        
+            
+    
+    
+    <a class="breadcrumb" href="/categories/技术/">技术</a><a class="breadcrumb" href="/categories/技术/综合/">综合</a><a class="breadcrumb" href="/categories/技术/综合/正则表达式/">正则表达式</a>
+
+
+        
+
+        
+    </div>
+</nav>
+
+<article>
+    <div class="card">
+        <div class="card-content">
+            
+
+            <div class="article-title">
+                
+    
+        <h1>正则表达式</h1>
+    
+
+
+            </div>
+            <time class="pink-link-context" datetime="2016-05-09T16:00:00.000Z"><a href="/2016/05/10/正则表达式/">2016-05-10</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/语法/" class="chip pink lighten-1">语法</a>
+        
+            <a href="/tags/正则表达式/" class="chip pink lighten-1">正则表达式</a>
+        
+    </div>
+
+
+            <div class="toc pink-link-context hide-on-med-and-down">
+    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#正则表达式-语法"><span class="section table-of-contents-text">正则表达式-语法</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#正则表达式-元字符"><span class="section table-of-contents-text">正则表达式-元字符</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#正则表达式-运算符优先级"><span class="section table-of-contents-text">正则表达式-运算符优先级</span></a></li><li class="section table-of-contents-item section table-of-contents-level-4"><a class="section table-of-contents-link" href="#正则表达式-匹配规则"><span class="section table-of-contents-text">正则表达式-匹配规则</span></a></li></ol>
+</div>
+
+
+            <div class="entry pink-link-context">
+                <h4 id="正则表达式-语法"><a href="#正则表达式-语法" class="headerlink" title="正则表达式-语法"></a>正则表达式-语法</h4><ul>
+<li><p>限定符</p>
+<p>限定符用来指定正则表达式中的一个给定组件必须要出现多少次才能满足匹配。有*或+或？或{n}或{n，}或{n，m}共6种。</p>
+<ul>
+<li><ul>
+<li>：匹配前面的子表达式零次或多次。等价于{0，}。</li>
+</ul>
+</li>
+<li>+：匹配前面的子表达式一次或多次。等价于{1，}。</li>
+<li>？：匹配前面的子表达式零次或一次。等价于{0,1}。</li>
+<li>{n}：n是一个非负整数。匹配确定的n次。</li>
+<li>{n，}：n是一个非负整数。至少匹配n次。</li>
+<li>{n，m}：m和n均为非负整数，其中n&lt;=m。最好匹配n次且最多匹配m次。请注意在逗号和两个数之间不能有空格。<a id="more"></a>
+限定符出现在范围表达式之后。因此，它应用于整个范围表达式。* 、+和？限定符都是贪婪的，因为他们毁尽可能多的匹配文字，只有在他们的后面加上一个？就可以实现非贪婪或最小匹配。</li>
+</ul>
+</li>
+<li><p>定位符</p>
+<p>定位符使您能够将正则表达式固定到行首或行尾。他们还使您能够创建这样的正则表达式，这些正则表达式出现在一个单词内、在一个单词的开头或者一个单词的结尾。</p>
+<p>定位符用来描述字符串或单词的边界，^和$分别指字符串的开始与结束，\b描述单词的前或后边界，\B表示非单词边界。</p>
+<p>正则表达式的限定符有：</p>
+<ul>
+<li>^：匹配<strong>输入字符串开始</strong>的位置。如果设置了RegExp对象的Multiline属性，^还会与\n或\r之后的位置匹配。</li>
+<li>$：匹配<strong>输入字符串结尾</strong>的位置。如果设置了RegExp对象的Multiline属性，$还会与\n或\r之后的位置匹配。</li>
+<li>\b：匹配一个字边界，即字与空格件的位置。</li>
+<li>\B：非字边界匹配。</li>
+</ul>
+<p><strong>注意</strong>：不能将限定符与定点符一起使用。由于在紧靠换行或者字边界的前面或后面不能有一个以上位置，因此不允许诸如^* 之类的表达式。</p>
+</li>
+<li><p>选择</p>
+<p>用圆括号将所有选择项括起来，相邻的选择项之间用|分隔。但是圆括号会有一个副作用，是相关的匹配会被缓存，此时用？：放在第一个选项前来消除这种副作用。</p>
+<p>其中？：是非捕获元之一，还有两个非捕获元是？=和？！，这两个还有更多的含义，前者为正向预查，在任何开始匹配圆括号内的正则表达式模式的位置来匹配搜索字符串，后者为负向预查，在任何开始不匹配该正则表达式模式的位置来匹配搜索字符串。</p>
+</li>
+<li><p>反向引用</p>
+<p>对于一个正则表达式模式或部分模式两边添加圆括号将导致相关匹配存储到一个临时缓冲区中，所捕获的每个自匹配都按照在正则表达式模式中从左到右出现的顺序存储。缓冲区编号从1开始，最多可存储99个捕获的子表达式。每个缓冲区都可以使用‘\n’访问，其中n为一个标识特定缓冲区的一位或两位十进制数。</p>
+<p>可以使用非捕获元字符 ‘？：’、‘？=’或‘？！’来重写捕获，忽略对相关匹配的保存。</p>
+<p>反向引用的最简单的、最有用的应用之一，是提供查找文本中两个相同的相邻单词的匹配项的能力。</p>
+</li>
+</ul>
+<h4 id="正则表达式-元字符"><a href="#正则表达式-元字符" class="headerlink" title="正则表达式-元字符"></a>正则表达式-元字符</h4><ul>
+<li><p>下表包含了元字符的完整列表以及他们在正则表达式上下文中的行为：</p>
+<ul>
+<li>\:将下一个字符标记为一个特殊字符、或将一个原义字符、或一个后向引用、或一个八进制转义符。例如，‘n’匹配字符“n”。‘\n’匹配一个换行符。序列‘\’匹配“\”而“(”则匹配“（”。</li>
+<li>.：匹配除“\n”之外的任何单个字符。要匹配包括‘\n’在内的任何字符，请使用像‘[.\n]’的模式。</li>
+<li>(pattern):匹配pattern并获取这一匹配。所获取的匹配可以从产生的Matches集合得到，在VBScript中使用SubMatches集合，在JScript中则使用$0…$9属性。要匹配圆括号字符，请使用‘(’或‘)’。</li>
+<li>(?:pattern):匹配pattern但不获取匹配结果，也就是说这是一个非获取匹配，不进行存储供以后使用。这在使用”或”字符(|)来组合一个模式的各个部分是很有用。例如，‘industr(?:y|ies)’就是一个比‘industry|industries’更简略的表达式。</li>
+<li>(?=pattern):正向预查，在任何匹配pattern的字符串开始处匹配查找字符串。这是一个非获取匹配，也就是说，该匹配不需要获取供以后使用。例如，’Windows (?=95|98|NT|2000)’ 能匹配 “Windows 2000” 中的 “Windows” ，但不能匹配 “Windows 3.1” 中的 “Windows”。预查不消耗字符，也就是说，在一个匹配发生后，在最后一次匹配之后立即开始下一次匹配的搜索，而不是从包含预查的字符之后开始。</li>
+<li>(?!pattern):负向预查，在任何不匹配pattern的字符串开始处匹配查找字符串。这是一个非获取匹配，也就是说，该匹配不需要获取供以后使用。例如’Windows (?!95|98|NT|2000)’ 能匹配 “Windows 3.1” 中的 “Windows”，但不能匹配 “Windows 2000” 中的 “Windows”。预查不消耗字符，也就是说，在一个匹配发生后，在最后一次匹配之后立即开始下一次匹配的搜索，而不是从包含预查的字符之后开始。</li>
+<li>x|y：匹配x或y。例如，‘z|food’能匹配“z”或“food”。‘(z|f)ood’则匹配“zood”或“food”。</li>
+<li>[xyz]:字符集合。匹配所包含的任意一个字符。例如，’[abc]’可以匹配“plain”中的’a’。</li>
+<li>[^xyz]:负值字符集合。匹配未包含的任意字符。例如，’[^abc]’可以匹配”plain”中的’p’、’l’、’i’、’n’。</li>
+<li>[a-z]:字符范围。匹配制定范围内的任意字符。</li>
+<li>[^a-z]:负值字符集合。匹配任何不在指定范围内的任意字符。</li>
+<li>\b:匹配一个单词边界，也就是指单词和空格间的位置。例如， ‘er\b’ 可以匹配”never” 中的 ‘er’，但不能匹配 “verb” 中的 ‘er’。</li>
+<li>\B:匹配非单词边界。’er\B’ 能匹配 “verb” 中的 ‘er’，但不能匹配 “never” 中的 ‘er’。</li>
+<li>\cx:匹配由x指明的控制字符。例如，\cM匹配一个Control-M或回车符。x的值必须为A-Z或a-z之一。否则，将c视为一个原义的‘c’字符。</li>
+<li>\d:匹配一个数字字符。等价于[0-9]。</li>
+<li>\D:匹配一个非数字字符。等价于[^0-9]。</li>
+<li>\f:匹配一个换行符。等价于\xOc和\cL。</li>
+<li>\n     匹配一个换行符。等价于 \x0a 和 \cJ。</li>
+<li>\r     匹配一个回车符。等价于 \x0d 和 \cM。</li>
+<li>\s     匹配任何空白字符，包括空格、制表符、换页符等等。等价于 [ \f\n\r\t\v]。</li>
+<li>\S     匹配任何非空白字符。等价于 [^ \f\n\r\t\v]。</li>
+<li>\t     匹配一个制表符。等价于 \x09 和 \cI。</li>
+<li>\v     匹配一个垂直制表符。等价于 \x0b 和 \cK。</li>
+<li>\w     匹配包括下划线的任何单词字符。等价于’[A-Za-z0-9_]’。</li>
+<li>\W     匹配任何非单词字符。等价于 ‘[^A-Za-z0-9_]’。</li>
+<li>\xn     匹配 n，其中 n 为十六进制转义值。十六进制转义值必须为确定的两个数字长。例如，’\x41’ 匹配 “A”。’\x041’ 则等价于 ‘\x04’ &amp; “1”。正则表达式中可以使用 ASCII 编码。</li>
+<li>\num     匹配 num，其中 num 是一个正整数。对所获取的匹配的引用。例如，’(.)\1’ 匹配两个连续的相同字符。</li>
+<li>\n     标识一个八进制转义值或一个向后引用。如果 \n 之前至少 n 个获取的子表达式，则 n 为向后引用。否则，如果 n 为八进制数字 (0-7)，则 n 为一个八进制转义值。</li>
+<li>\nm     标识一个八进制转义值或一个向后引用。如果 \nm 之前至少有 nm 个获得子表达式，则 nm 为向后引用。如果 \nm 之前至少有 n 个获取，则 n 为一个后跟文字 m 的向后引用。如果前面的条件都不满足，若 n 和 m 均为八进制数字 (0-7)，则 \nm 将匹配八进制转义值 nm。</li>
+<li>\nml     如果 n 为八进制数字 (0-3)，且 m 和 l 均为八进制数字 (0-7)，则匹配八进制转义值 nml。</li>
+<li>\un     匹配 n，其中 n 是一个用四个十六进制数字表示的 Unicode 字符。例如， \u00A9 匹配版权符号 (?)。</li>
+</ul>
+</li>
+</ul>
+<h4 id="正则表达式-运算符优先级"><a href="#正则表达式-运算符优先级" class="headerlink" title="正则表达式-运算符优先级"></a>正则表达式-运算符优先级</h4><ul>
+<li><p>正则表达式从左到右进行计算，并遵循优先级顺序，这与算术表达式非常类似。</p>
+<p>相同优先级的从左到右进行运算，不同优先级的运算先高后低。下面从最高到最低说明了各种正则表达式运算符的优先级顺序：</p>
+<ul>
+<li>\: 转义符</li>
+<li>(), (?:), (?=), []：圆括号和方括号</li>
+<li><ul>
+<li>, +, ?, {n}, {n,}, {n,m}：限定符<br>^, $, \任何元字符、任何字符     定位点和序列（即：位置和顺序）</li>
+</ul>
+</li>
+<li>|：替换，”或”操作<br>字符具有高于替换运算符的优先级，使得”m|food”匹配”m”或”food”。若要匹配”mood”或”food”，请使用括号创建子表达式，从而产生”(m|f)ood”。</li>
+</ul>
+</li>
+</ul>
+<h4 id="正则表达式-匹配规则"><a href="#正则表达式-匹配规则" class="headerlink" title="正则表达式-匹配规则"></a>正则表达式-匹配规则</h4><ul>
+<li><p>基本模式匹配</p>
+<p>一切从最基本的开始。模式，是正则表达式最基本的元素，他们是一组描述字符串特征的字符。模式可以很简单，由普通的字符串组成，也可以非常复杂，往往用特殊的字符表示一个范围内的字符、重复出现，或表示上下文。</p>
+</li>
+<li><p>字符簇</p>
+<p>在Internet的程序中，正则表达式通常用来验证用户的输入。当用户提交了一个Form以后，要判断输入的电话号码、地址、Email地址、信用卡号码等是否有效，用普通的基于字面的字符是不够的。所以要用一个中更自由的描述我们要的模式的方法，他就是字符簇。</p>
+<blockquote>
+<p>匹配所有的数字，句号和减号</p>
+</blockquote>
+<p><code>[0-9\.\-]</code>  </p>
+<blockquote>
+<p>匹配所有的白字符</p>
+</blockquote>
+<p><code>[ \f\r\t\n]</code></p>
+<p>PHP的正则表达式有一些内置的通用字符簇：</p>
+<ul>
+<li>[[:alpha:]]     任何字母</li>
+<li>[[:digit:]]     任何数字</li>
+<li>[[:alnum:]]     任何字母和数字</li>
+<li>[[:space:]]     任何空白字符</li>
+<li>[[:upper:]]     任何大写字母</li>
+<li>[[:lower:]]     任何小写字母</li>
+<li>[[:punct:]]     任何标点符号</li>
+<li>[[:xdigit:]]     任何16进制的数字，相当于[0-9a-fA-F]</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>确定重复出现</p>
+<p>到现在为止，你已经知道如何去匹配一个字母或数字，但更多的情况下，可能要匹配一个单词或一组数字。一个单词有若干个字母组成，一组数字有若干个单数组成。跟在字符或字符簇后面的花括号({})用来确定前面的内容的重复出现的次数。</p>
+<ul>
+<li>^[a-zA-Z_]$ ——–     所有的字母和下划线</li>
+<li>^[[:alpha:]]{3}$     ——–所有的3个字母的单词</li>
+<li>^a$ ——–    字母a</li>
+<li>^a{4}$     ——–aaaa</li>
+<li>^a{2,4}$ ——–    aa,aaa或aaaa</li>
+<li>^a{1,3}$     ——–a,aa或aaa</li>
+<li>^a{2,}$ ——–    包含多于两个a的字符串</li>
+<li>^a{2,} ——–    如：aardvark和aaab，但apple不行</li>
+<li>a{2,} ——–    如：baad和aaa，但Nantucket不行</li>
+<li>\t{2} ——–    两个制表符</li>
+<li>.{2}     ——– 所有的两个字符</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+    <section id="comment">
+        <div class="card">
+            <div class="card-content">
+                <!-- Duoshuo Comment BEGIN -->
+                <div class="ds-thread" data-thread-key="2016/05/10/正则表达式/" data-title="正则表达式" data-url="http://yoursite.com/2016/05/10/正则表达式/"></div>
+
+                <script type="text/javascript">
+                    console.log(document.querySelector('.ds-thread'));
+                    var duoshuoQuery = {
+                        short_name: '18633847058'
+                    };
+                    (function() {
+                        var ds = document.createElement('script');
+                        ds.type = 'text/javascript';
+                        ds.async = true;
+                        ds.src = (document.location.protocol == 'https:'
+                            ? 'https:'
+                            : 'http:') + '//static.duoshuo.com/embed.js';
+                        ds.charset = 'UTF-8';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+                    })();
+                </script>
+                <!-- Duoshuo Comment END -->
+            </div>
+        </div>
+    </section>
+
+
+
+</div>
+
+        <div class="fixed-action-btn float-sitemap">
+    <a class="btn-floating btn-large pink">
+      <i class="fa fa-caret-square-o-up"></i>
+    </a>
+    <ul>
+      <li><a class="btn-return-top btn-floating waves-effect green" title="回到顶部"><i class="fa fa-arrow-circle-o-up"></i></a></li>
+      <li><a class="btn-floating waves-effect button-collapse yellow darken-1"  data-activates="main-menu" title="menu"><i class="fa fa-navicon"></i></a></li>
+    </ul>
+  </div>
+
+    </main>
+    <footer class="page-footer indigo darken-1">
+    
+    <div class="container">
+        <div class="row">
+            
+            <div class="social-group col m3 s12">
+                <h5 class="white-text">社交</h5>
+                
+                    <a class="social-link" href="http://weibo.com/1956184117" target="_blank">
+                        <i class="fa fa-2x fa-weibo"></i>
+                    </a>
+                
+                    <a class="social-link" href="https://github.com/18633847058" target="_blank">
+                        <i class="fa fa-2x fa-github"></i>
+                    </a>
+                
+                    <a class="social-link" href="/atom.xml" target="_blank">
+                        <i class="fa fa-2x fa-rss"></i>
+                    </a>
+                
+            </div>
+            
+
+            
+            <div class="col m9 s12">
+                <h5 class="white-text">友情链接</h5>
+                
+                    <a class="social-link" href="http://raytaylorlin.com/" target="_blank">raytaylorism主题作者的技术博客</a>
+                
+                    <a class="social-link" href="https://github.com/raytaylorlin" target="_blank">Github地址（测试友情链接）</a>
+                
+            </div>
+            
+        </div>
+    </div>
+    
+
+    <div class="footer-copyright pink-link-context">
+        <div class="container">
+            © 2016 example.com, All rights reserved.
+            <p class="right" style="margin-top: 0;">本博客由 <a href="https://hexo.io">Hexo</a> 强力驱动 | 主题 <a href="https://github.com/raytaylorlin/hexo-theme-raytaylorism">raytaylorism</a></p>
+        </div>
+    </div>
+</footer>
+
+
+    <noscript>
+    <div class="noscript">
+        <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+    </div>
+</noscript>
+<div class="noscript">
+    <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+</div>
+
+
+<script src="/js/jquery-2.1.1.min.js"></script>
+<script src="/js/materialize.min.js"></script>
+
+<script>
+    (function($) {
+        $(document).ready(function() {
+            // 隐藏禁用javascript（针对微信内置浏览器）的提示
+            $('.noscript').hide();
+
+            // 图片缩放效果
+            var $imgs = $('img').not('.slider-image').not('.avatar-image').not('.carousel-image').not('.card-cover-image').not('.qrcode');
+
+            // 给图片加上点击放大效果（materialbox插件）
+            $imgs.addClass('materialboxed').each(function(i, el) {
+                $(this).attr('data-caption', $(this).attr('alt') || ' ');
+            }).materialbox();
+
+            // 优化表格的显示
+            $('table').each(function() {
+                var $table = $(this);
+                // 除去多行代码的情况
+                if ($table.find('pre').length == 0) {
+                    $table.addClass('responsive-table striped bordered');
+                }
+            });
+
+            // 首页幻灯片
+            $('.slider').slider({indicators: true, full_width: true, interval: 8000});
+
+            $(".button-collapse").sideNav();
+            $(".category-menu").sideNav();
+
+            // 针对gallery post
+            $('.carousel').carousel({full_width: true});
+            $('.carousel-control.prev').click(function() {
+                $('.carousel').carousel('prev');
+            });
+            $('.carousel-control.next').click(function() {
+                $('.carousel').carousel('next');
+            });
+
+            // 文章目录
+            $('article').not('.simple-article').find('h1').add('h2').add('h3').add('h4').add('h5').add('h6').scrollSpy();
+            // 修正文章目录的left-border颜色
+            var color = $('.table-of-contents-text').css('color');
+            $('.table-of-contents-link').css('border-left-color', color);
+
+            // 针对移动端做的优化：FAB按钮点击一下收回
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                $('.fixed-action-btn').addClass('click-to-toggle');
+            }
+            // 回到顶部
+            $('.btn-return-top').click(function() {
+                $('body, html').animate({
+                    scrollTop: 0
+                }, 500);
+            });
+
+            // 重置读书页面的Tab标签页的颜色
+            $('li.tab a').hover(function() {
+                $(this).toggleClass('text-lighten-4');
+            });
+            $('.indicator').addClass('pink lighten-2');
+
+            
+            // 添加new标签
+            $('.menu-reading').append('<span class="new badge pink"></span>');
+            
+
+            // 搜索功能
+            $('.modal-trigger').leanModal();
+            var searchXml = "search.xml";
+            if (searchXml.length == 0) {
+             	searchXml = "search.xml";
+            }
+            var searchPath = "/" + searchXml;
+            initSearch(searchPath, 'search-input', 'search-result');
+        });
+
+        // 初始化搜索与匹配函数
+        var initSearch = function(path, search_id, content_id) {
+            'use strict';
+            $.ajax({
+                url: path,
+                dataType: "xml",
+                success: function(xmlResponse) {
+                    // get the contents from search data
+                    var datas = $("entry", xmlResponse).map(function() {
+                        return {
+                            title: $("title", this).text(),
+                            content: $("content", this).text(),
+                            url: $("url", this).text()
+                        };
+                    }).get();
+                    var $input = document.getElementById(search_id);
+                    var $resultContent = document.getElementById(content_id);
+                    $input.addEventListener('input', function() {
+                        var str = '<ul class=\"search-result-list\">';
+                        var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                        $resultContent.innerHTML = "";
+                        if (this.value.trim().length <= 0) {
+                            return;
+                        }
+                        // perform local searching
+                        datas.forEach(function(data) {
+                            var isMatch = true;
+                            var content_index = [];
+                            var data_title = data.title.trim().toLowerCase();
+                            var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                            var data_url = data.url;
+                            var index_title = -1;
+                            var index_content = -1;
+                            var first_occur = -1;
+                            // only match artiles with not empty titles and contents
+                            if (data_title != '' && data_content != '') {
+                                keywords.forEach(function(keyword, i) {
+                                    index_title = data_title.indexOf(keyword);
+                                    index_content = data_content.indexOf(keyword);
+                                    if (index_title < 0 && index_content < 0) {
+                                        isMatch = false;
+                                    } else {
+                                        if (index_content < 0) {
+                                            index_content = 0;
+                                        }
+                                        if (i == 0) {
+                                            first_occur = index_content;
+                                        }
+                                    }
+                                });
+                            }
+                            // show search results
+                            if (isMatch) {
+                                keywords.forEach(function(keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    data_title = data_title.replace(regS, "<span class=\"search-keyword pink lighten-2\">" + keyword + "</span>");
+                                });
+
+                                str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                                var content = data.content.trim().replace(/<[^>]+>/g, "");
+                                if (first_occur >= 0) {
+                                    // cut out 100 characters
+                                    var start = first_occur - 20;
+                                    var end = first_occur + 80;
+                                    if (start < 0) {
+                                        start = 0;
+                                    }
+                                    if (start == 0) {
+                                        end = 100;
+                                    }
+                                    if (end > content.length) {
+                                        end = content.length;
+                                    }
+                                    var match_content = content.substring(start, end);
+                                    // highlight all keywords
+                                    keywords.forEach(function(keyword) {
+                                        var regS = new RegExp(keyword, "gi");
+                                        match_content = match_content.replace(regS, "<span class=\"search-keyword pink lighten-2\">" + keyword + "</span>");
+                                    });
+
+                                    str += "<p class=\"search-result\">..." + match_content + "...</p>"
+                                }
+                                str += "</li>";
+                            }
+                        });
+                        str += "</ul>";
+                        $resultContent.innerHTML = str;
+                    });
+                }
+            });
+        }
+    })(jQuery);
+</script>
+
+
+<script src="/js/prettify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("pre").addClass("prettyprint");
+        prettyPrint();
+    });
+</script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+</body>
+</html>

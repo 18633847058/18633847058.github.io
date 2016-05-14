@@ -1,0 +1,873 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Hello Eric’world!!</title>
+  <subtitle>杨理清的技术博客</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2016-05-13T02:14:46.000Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>Eric Yang</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Android点击事件处理</title>
+    <link href="http://yoursite.com/2016/05/13/%E7%82%B9%E5%87%BB%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86/"/>
+    <id>http://yoursite.com/2016/05/13/点击事件处理/</id>
+    <published>2016-05-12T16:00:00.000Z</published>
+    <updated>2016-05-13T02:14:46.000Z</updated>
+    
+    <content type="html">&lt;p&gt;该文章是我在极客学院Wiki学习时整理所得.&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;安卓系统点击事件处理&quot;&gt;&lt;a href=&quot;#安卓系统点击事件处理&quot; class=&quot;headerlink&quot; title=&quot;安卓系统点击事件处理&quot;&gt;&lt;/a&gt;安卓系统点击事件处理&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;用户的点击事件均被包装为MotionEvent&lt;/li&gt;
+&lt;li&gt;MotionEvent描述了用户的行为&lt;ul&gt;
+&lt;li&gt;ACTION_DOWN&lt;/li&gt;
+&lt;li&gt;ACTION_UP&lt;/li&gt;
+&lt;li&gt;ACTION_MOVE&lt;/li&gt;
+&lt;li&gt;ACTION_POINTER_DOWN&lt;/li&gt;
+&lt;li&gt;ACTION_POINTER_UP&lt;/li&gt;
+&lt;li&gt;ACTION_CANCEL&lt;/li&gt;
+&lt;li&gt;使用MotionEventCompat.getActionMasker(ev)获取MotionEvent对应的action&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;MotionEvent还包括以下信息&lt;ul&gt;
+&lt;li&gt;点击的位置(x,y坐标)&lt;/li&gt;
+&lt;li&gt;触点的数量(手指)&lt;/li&gt;
+&lt;li&gt;事件发生的时间戳&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;任何一个手势,都是以ACTION_DOWN起始,ACTION_UP结束&lt;/li&gt;
+&lt;li&gt;事件从Activity的dispatchTouchEvent()函数开始,沿着View层次树依次向下传递&lt;ul&gt;
+&lt;li&gt;父元素把事件dispatch到子元素&lt;/li&gt;
+&lt;li&gt;事件能在任意阶段被intercept&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;事件会沿着View的层次树依次向下传递,然后有反向向上传递,知道被”消费”&lt;ul&gt;
+&lt;li&gt;View如果对手势感兴趣,就必须消费掉ACTION_DOWN的事件&lt;/li&gt;
+&lt;li&gt;出于性能的考虑,同一手势的后续事件将不会按照完整的路径进行传递,而是直接传递到消费了ACTION_DOWN事件的View&lt;/li&gt;
+&lt;li&gt;如果所有的View(ViewGroup)都没有消费掉事件,那它将传递到Activity的onTouchEvent()函数中,并结束传递过程,即如果没有被消费,也不会在继续传递了&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;可选的OnTouchListener能在任一View(ViewGroup)上intercept事件,事件被intercept之后,后面的调用将被传入ACTION_CANCEL?啥意思??&lt;/li&gt;
+&lt;li&gt;Activity.dispatchTouchEvent()&lt;ul&gt;
+&lt;li&gt;总是首先被调用&lt;/li&gt;
+&lt;li&gt;Sends event to root view attached to Window&lt;/li&gt;
+&lt;li&gt;如果所有的View(ViewGroup)都没有消费该事件,那么Activity.onTouchEvent()将被调用,而且这个函数是最后一个被调用的函数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;ViewGroup.dispatchTouchEvent()&lt;ul&gt;
+&lt;li&gt;首先调用onInterceptTouchEvent()函数,判断是否需要拦截&lt;ul&gt;
+&lt;li&gt;检查是否应该替代自View的处理&lt;/li&gt;
+&lt;li&gt;Passes ACTION_CANCEL to active child&lt;/li&gt;
+&lt;li&gt;如果要消费掉同一手势的所有后续事件,需要返回true&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;对所有的孩子,以添加顺序的逆序进行遍历&lt;ul&gt;
+&lt;li&gt;如果点击在孩子的边界内,则调用child.dispatchTouchEvent()&lt;/li&gt;
+&lt;li&gt;如果没有被当前的孩子消费,则传递到下一个孩子&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;如果所有的孩子都未消费该事件,则传递给listener,OnTouchListener.onTouch()&lt;/li&gt;
+&lt;li&gt;如果没有listener,或者listener也未消费,则自己处理,调用ViewGroup.onTouchEvent()&lt;/li&gt;
+&lt;li&gt;Intercepted events jump over child step&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;View.dispatchTouchEvent()&lt;ul&gt;
+&lt;li&gt;如果被设置了OnTouchListener,那么将先把事件发送到listener,调用View.OnTouchListener.onTouch()&lt;/li&gt;
+&lt;li&gt;如果listener没有消费事件,将调用View.onTouchEvent(),即自己处理点击事件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;小结&lt;ul&gt;
+&lt;li&gt;手势以ACTION_DOWN起始,以ACTION_UP结束&lt;/li&gt;
+&lt;li&gt;ACTION_DOWN,在每一层View上都会调用dispatchTouchEvent(),该View会判断是否对接下来的手势感兴趣,后续的点击事件将直接传递到感兴趣的View&lt;/li&gt;
+&lt;li&gt;ViewGroup可以intercept一个手势,因为onInterceptTouchEvent()是在dispatchTouchEvent()函数中最先被调用的,如果onInterceptTouchEvent()返回true,它的孩子将不会收到该手势的后续事件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;自定义点击事件处理&quot;&gt;&lt;a href=&quot;#自定义点击事件处理&quot; class=&quot;headerlink&quot; title=&quot;自定义点击事件处理&quot;&gt;&lt;/a&gt;自定义点击事件处理&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;途径&lt;ul&gt;
+&lt;li&gt;(View/ViewGroup子类,Target)重载onTouchEvent()函数&lt;/li&gt;
+&lt;li&gt;为Target设置OnTouchListener&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;消费事件(onTouchEvent())&lt;ul&gt;
+&lt;li&gt;ACTION_DOWN:如果对手势感兴趣,那么ACTION_DOWN的event就要返回true,即便对于ACTION_DOWN不感兴趣&lt;/li&gt;
+&lt;li&gt;后续的事件,同样返回true,结束事件的处理流程(不会再传递给其他view或者parent view)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;ViewConfiguration的一些有用方法:&lt;ul&gt;
+&lt;li&gt;getScaledTouchSlop():判断一个移动距离是否为drag&lt;/li&gt;
+&lt;li&gt;getScaledMinimumFlingVelocity():判断一个拖拽速度是否为fling&lt;/li&gt;
+&lt;li&gt;getLongPressTimeOut():判断一个touch时间段是否为long press&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;传递点击事件:调用target的dispatchTouchEvent(),不要直接调用target的onTouchEvent()&lt;/li&gt;
+&lt;li&gt;ViewGroup拦截点击事件&lt;ul&gt;
+&lt;li&gt;重载onInterceptTouchEvent()&lt;/li&gt;
+&lt;li&gt;如果对当前的手势感兴趣,onInterceptTouchEvent()返回true,之后的点击事件将不再经过onInterceptTouchEvent()函数&lt;/li&gt;
+&lt;li&gt;其他的target(之前消费事件的View/ViewGroup)将收到ACTION_CANCEL&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;一些建议/警告&lt;ul&gt;
+&lt;li&gt;尽量调用super的对应方法,父类中已经做了很多基础工作了&lt;/li&gt;
+&lt;li&gt;ACTION_MOVE的处理中,检查移动距离是否超过slop(getScaledTouchSlop())&lt;/li&gt;
+&lt;li&gt;处理ACTION_CANCEL事件,父View可能会拦截事件,ACTION_CANCEL后需要重置状态,且之后该手势将不会再收到任何事件&lt;/li&gt;
+&lt;li&gt;intercept之后,该手势之后的所有事件都将被拦截,所以不要轻易拦截&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;多触点事件响应&lt;ul&gt;
+&lt;li&gt;MotionEvent.getPointerCount()：获取当前屏幕上的触点数量&lt;/li&gt;
+&lt;li&gt;ACTION_POINTER_DOWN，ACTION_POINTER_UP用来响应次触点的事件,MotionEvent.getActionMasked(),MotionEvent.getActionIndex()&lt;/li&gt;
+&lt;li&gt;MotionEvent的有些方法会有两个版本，带index参数的，用于获取第index个触点的数据；不带参数的，获取主触点（第一个触点）的数据&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;批量处理&lt;ul&gt;
+&lt;li&gt;出于效率的考虑,ACTION_MOVE可以被打包到一个MotionEvent进行处理&lt;/li&gt;
+&lt;li&gt;最近一次(本次)事件的信息,通过标准的方法获取:getX(),getY(),getEventTime()&lt;/li&gt;
+&lt;li&gt;本次和最早一次ACTION_MOVE的信息,通过相应historical的方法获取&lt;ul&gt;
+&lt;li&gt;getHistorySize()获取打包的数量&lt;/li&gt;
+&lt;li&gt;getHistorical*(pos)获取第一个触点的第pos个历史事件的信息&lt;/li&gt;
+&lt;li&gt;getHistorical*(index,pos)获取第index个触点的第pos个历史事件的信息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Can reconstruct all events as they occurred in time for maximum precision&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;System Touch Handlers&lt;ul&gt;
+&lt;li&gt;不要首先就考虑使用自定义的事件处理方式&lt;/li&gt;
+&lt;li&gt;OnClickListener&lt;/li&gt;
+&lt;li&gt;OnLongClickListener&lt;/li&gt;
+&lt;li&gt;OnTouchListener&lt;ul&gt;
+&lt;li&gt;监听每一个MotionEvent,而不需要编写子类&lt;/li&gt;
+&lt;li&gt;可以在Listener中消费事件&lt;/li&gt;
+&lt;li&gt;view的onTouchEvent处理中,优先调用的是listener的处理函数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;OnScrollListener / View.onScrollChanged()&lt;/li&gt;
+&lt;li&gt;GestureDetector&lt;ul&gt;
+&lt;li&gt;onDown(),onSingleTapUP(),onDoubleTap()&lt;/li&gt;
+&lt;li&gt;onLongPress()&lt;/li&gt;
+&lt;li&gt;onScroll()(缓慢滚动)&lt;/li&gt;
+&lt;li&gt;onFLing()(快速滚动后释放手机)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;ScaleGestureDetector&lt;ul&gt;
+&lt;li&gt;onScaleBegin(),onScale(),OnScaleEnd()&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;一个拓展的gesture detector库:android-gesture-detectors&lt;/li&gt;
+&lt;li&gt;通过OnTouchListener或者onTouchEvent()进行处理&lt;/li&gt;
+&lt;li&gt;缺点&lt;ul&gt;
+&lt;li&gt;Consume UP events and exposes no interface for CANCEL events&lt;/li&gt;
+&lt;li&gt;May require added touch handling if these cases need special handling (e.g. reset a View’s appearance)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Touch Delegate&lt;ul&gt;
+&lt;li&gt;Specialized object to assist in forwarding touches from a parent view to its child&lt;/li&gt;
+&lt;li&gt;Allows for the touch area of a specific view to be different than its actual bounds&lt;/li&gt;
+&lt;li&gt;Called in onTouchEvent() of attached View（Events have to make it that far without being consumed by a child or listener）&lt;/li&gt;
+&lt;li&gt;TouchDelegate is designed to be set on the PARENT and passed the CHILD view that touches should be forwarded to&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;ViewGroup parent;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;View child;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Rect touchArea;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;parent.setTouchDelegate(new TouchDelegate(touchArea, child));&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;ViewDragHelper&lt;br&gt;快速处理view拖拽的辅助类.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;创建ViewDragHelper:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;mDragHelper = ViewDragHelper.create(this, 1.0f, new DragHelperCallback());&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;把ViewGroup的点击事件传递给ViewDragHelper:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;@Override&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;public boolean onInterceptTouchEvent(MotionEvent event) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  if (mDragHelper.shouldInterceptTouchEvent(event)) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;          return true;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  return super.onInterceptTouchEvent(event);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;@Override&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;public boolean onTouchEvent(MotionEvent event) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  mDragHelper.processTouchEvent(event);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  return true;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;ViewDragHelper.Callback的实现类DragHelperCallback中，重载感兴趣的函数，实现自己的逻辑&lt;/li&gt;
+&lt;li&gt;有一个用于边缘拖拽结束activity的库，边缘拖拽使用的就是ViewDragHelper：Slidr&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;该文章是我在极客学院Wiki学习时整理所得.&lt;br&gt;
+    
+    </summary>
+    
+      <category term="技术" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="Android" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/Android/"/>
+    
+    
+      <category term="点击事件" scheme="http://yoursite.com/tags/%E7%82%B9%E5%87%BB%E4%BA%8B%E4%BB%B6/"/>
+    
+      <category term="Android" scheme="http://yoursite.com/tags/Android/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>评论功能数据库设计和开发</title>
+    <link href="http://yoursite.com/2016/05/12/%E8%AF%84%E8%AE%BA%E5%8A%9F%E8%83%BD%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1/"/>
+    <id>http://yoursite.com/2016/05/12/评论功能数据库设计/</id>
+    <published>2016-05-11T16:00:00.000Z</published>
+    <updated>2016-05-12T06:34:20.000Z</updated>
+    
+    <content type="html">&lt;h3 id=&quot;评论功能数据库设计和开发&quot;&gt;&lt;a href=&quot;#评论功能数据库设计和开发&quot; class=&quot;headerlink&quot; title=&quot;评论功能数据库设计和开发&quot;&gt;&lt;/a&gt;评论功能数据库设计和开发&lt;/h3&gt;&lt;p&gt;本文是作者在评论功能设计方面在数据库上的一些总结。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h4 id=&quot;需求分析&quot;&gt;&lt;a href=&quot;#需求分析&quot; class=&quot;headerlink&quot; title=&quot;需求分析&quot;&gt;&lt;/a&gt;需求分析&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;一问一答:网易新闻(app)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://img.kuqin.com/upimg/allimg/160113/1J641G95-0.jpg?imageView/2/w/480/h/640|watermark/2/text/aHR0cDovL21pY2hhZWwtai54eXo=&quot; alt=&quot;一问一答&quot;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;评论为主:新浪新闻(分为评论和回复)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://img.kuqin.com/upimg/allimg/160113/1J6415144-1.jpg?imageView/2/w/500/h/800|watermark/2/text/aHR0cDovL21pY2hhZWwtai54eXo=&quot; alt=&quot;一问一答&quot;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;同级显示&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://img.kuqin.com/upimg/allimg/160113/1J6413964-2.jpg?imageView/2/w/400/h/600|watermark/2/text/aHR0cDovL21pY2hhZWwtai54eXo=&quot; alt=&quot;一问一答&quot;&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&quot;数据库设计&quot;&gt;&lt;a href=&quot;#数据库设计&quot; class=&quot;headerlink&quot; title=&quot;数据库设计&quot;&gt;&lt;/a&gt;数据库设计&lt;/h4&gt;&lt;p&gt;由于我一直使用&lt;strong&gt; mysql&lt;/strong&gt;,我就以&lt;strong&gt; mysql&lt;/strong&gt;为例谈一下针对上面三种场景的设计&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一问一答:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这种场景下一般评论数量较少,评论不为活跃,可以不区分评论和回复,而同意看成评论.区别在于有的评论是直接评论&lt;strong&gt; 主题&lt;/strong&gt;(每个评论都挂在某个主题下,如文章帖子等),而有些评论是&lt;strong&gt; @&lt;/strong&gt; 其他用户的,为了能cover这两种场景,使用一张表就可以达到效果,评论表如下设计:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;表字段&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;字段说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;id&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;主键&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;topic_id&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;主题ID&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;topic_type&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;主题type&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;content&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;评论内容&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;from_uid&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;评论用户id&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;to_uid&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;评论目标用户id&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;为了能复用评论模块,我们引入了一个topic_type字段来却分主题的类别。from_uid表示评论人的id，通过该id我们可以检索到评论人的相关信息。to_uid是评论目标人的id，如果没有目标人，则该字段为空。&lt;/p&gt;
+&lt;p&gt;出于性能的考虑，往往我们会冗余评论人的相关信息到评论表中，比如评论人的nick、头像等，目标用户也是如此。这样一来我们就只用查询单表就可以达到显示的效果。&lt;/p&gt;
+&lt;p&gt;有时，目标用户有多个，那么可以将to_uid字段修改为to_uids，保存时用分隔符来分隔用户id，而目标用户的信息再去查询缓存或者数据库。也可以简单的将多个目标用户的信息一起存成json格式，可以应付简单的展现需求。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;评论为主:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;在以评论为主的树形显示的情况下,数据库的设计十分灵活,可以使用单表,添加一个parent_id字段来指向父评论.如果数据库本身支持嵌套查询,那么还是比较方便的,SqlServer、Oracle都支持，但是mysql不支持，那么只能通过存储过程来实现。在互联网应用中，能不使用触发器存储过程的话，尽量不要去使用，因为其对性能有影响。&lt;/p&gt;
+&lt;p&gt;我们还可以将评论拆分为评论表和回复表，评论挂在各种主题下面，而回复都挂在评论下面。&lt;/p&gt;
+&lt;p&gt;评论表的设计如下：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;表字段&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;字段说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;id&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;主键&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;topic_id&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;主题ID&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;topic_type&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;主题type&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;content&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;评论内容&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;from_uid&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;评论用户id&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;回复表的设计如下：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;表字段&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;字段说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;id&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;主键&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;comment_id&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;评论ID&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;reply_id&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;回复目标id&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;reply_type&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;回复类型&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;content&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;回复内容&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;from_uid&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;回复用户id&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;to_uid&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;目标用户id&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;由于我们拆分了评论和回复，那么评论表就不再需要目标用户字段了，因为评论均是用户对主题的评论，评论表的设计更加简洁了。&lt;/p&gt;
+&lt;p&gt;回复表我添加了一个comment_id字段来表示该回复挂在的根评论id，这样设计也是出于性能方面的考虑，我们可以直接通过评论id一次性的捞出该评论下的所有回复，然后通过程序来编排回复的显示结构。通过适当的冗余来提高性能也是常用的优化手段之一。这里给出一段我通过评论id来查找并组织所有回复的代码：&lt;/p&gt;
+   &lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;35&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;public List&amp;lt;ReplyDTO&amp;gt; getReplyListByRid(long rid)&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  List&amp;lt;ReplyDO&amp;gt; replyDOList = replyDAO.queryReplyByCid(rid);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  if(replyDOList == null || replyDOList.size() == 0)&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    return new ArrayList&amp;lt;&amp;gt;();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  List&amp;lt;ReplyDTO&amp;gt; ReplyDTOList = new ArrayList&amp;lt;&amp;gt;();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  List&amp;lt;ReplyDTO&amp;gt; parentList =  new ArrayList&amp;lt;&amp;gt;();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  for(ReplyDO replyDO:replyDOList)&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ReplyDTO replyDTO = convertReplyToDTO(replyDO);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    if(replyDTO.getReplyType == ReplyType.COMMENT)&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      replyDTOList.add(replyDTO);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      parentList.add(replyDTO);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;else&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      boolean foundParent = false;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      if(replyDTOList.size()&amp;gt;0)&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        for(ReplyDTO parent:parentList)&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;          if(parent.getId().equals(replyDTO.getReplyId()))&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            if(parent.getNext() == null)&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;              parent.setNext(new ArrayList&amp;lt;ReplyDTO&amp;gt;());&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            parent.getNext().add(replyDTO);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            parentList.add(replyDTO);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            foundParent = true;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            break;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;          &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      if(!foundParent)&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        throw new RuntimeException(&amp;quot;sort reply error,should not go here&amp;quot;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  return replyDTOList;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;reply_type表示回复的类型,因为回复可以是针对评论的回复(comment),也可以是针对回复的回复(reply),通过这个字段来区分两种情景.&lt;/p&gt;
+&lt;p&gt;reply_id是表示回复目标的id,如果reply_type是comment的话,那么reply_id=comment_id,如果reply_type是reply的话,这表示这条回复的父回复.&lt;/p&gt;
+&lt;p&gt;在数据结构的设计上,我在replyDTO中设计了一个List&lt;replydto&gt; next属性,这样在形成了一个树形的结构,类似如下结构.&lt;br&gt;      &lt;img src=&quot;http://img.kuqin.com/upimg/allimg/160113/1J64121D-3.jpg?imageView/2/w/300/h/600|watermark/2/text/aHR0cDovL21pY2hhZWwtai54eXo=&quot; alt=&quot;树形结构&quot;&gt;&lt;/replydto&gt;&lt;/p&gt;
+&lt;p&gt;客户端可以直接根据该结构来进行树形结构的显示.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;同级显示:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;要达到网易新闻中评论的效果我还没有特别好的建议.这种场景中评论和回复是同级显示的,回复不在显示结构上不用挂在一个评论下面.双表的设计在这里就不太合适了,因为涉及到评论和回复的混排,使用双表则会导致查询的逻辑过于复杂.所以建议还是采用单表的实际,不区分评论和回复会简化应用层的逻辑.我们同意都看成评论,而有些评论是可以引用其他评论的.本人推荐采用闭包表的设计,例如:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;comment表设计:
+&lt;/code&gt;&lt;/pre&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;表字段&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;字段说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;id&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;主键&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;topic_id&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;主题ID&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;topic_type&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;主题type&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;content&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;评论内容&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;from_uid&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;评论用户id&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;pre&gt;&lt;code&gt;parent_children表:
+&lt;/code&gt;&lt;/pre&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;表字段&lt;/th&gt;
+&lt;th style=&quot;text-align:center&quot;&gt;字段说明&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;id&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;主键&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;parent_id&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;父ID&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;child_id&lt;/td&gt;
+&lt;td style=&quot;text-align:center&quot;&gt;子id&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;comment表保存所有评论内容,而parent_children表则记录评论表中各个评论的父子关系.&lt;/p&gt;
+&lt;p&gt;查询时往往会按照时间排序,我们可以直接按照id或者创建事件降序排列查询comment表即可.如果用户想查询一条评论的完整引用,则可以通过parent_children来找打对应的路径.向上查找到评论只需要可执行:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;select parent_id from  parent_children where child_id=${id} and parent_id != ${id}&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;向下查找所有的子孙评论可执行:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;select child_id from parent_children where parent_id = ${id} and parent_id != ${id}&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;闭包表在查询时非常方便,但是插入的性能稍差,因为除了插入评论表以外,还需要把该条评论所有的父子关系插入到父子关系表中.插入性能会随着评论层级的加深而线性下降.&lt;/p&gt;
+&lt;h4 id=&quot;海量数据优化&quot;&gt;&lt;a href=&quot;#海量数据优化&quot; class=&quot;headerlink&quot; title=&quot;海量数据优化&quot;&gt;&lt;/a&gt;海量数据优化&lt;/h4&gt;&lt;p&gt;如果你的系统每天都会有成千上万条评论,那么单表的设计肯定是不行,优化的方式也有很多.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;分库分表. 分库分表是最为常用也最有效的优化方式,建议按照主题来分库分表.这样同一个主题下面的评论就会落到同一张表里,避免了跨表查询.&lt;/li&gt;
+&lt;li&gt;适当的数据冗余. 如果你需要显示评论人的相关信息,那么在插入评论时就把这些信息写入评论表中,避免多次查询.实际上,如果是记录数据,都可以冗余对应的数据信息,因为它们的数据的实时行和一致性要求并不高,用户不会因为评论中的头像没更新而撕了你,哈哈.&lt;/li&gt;
+&lt;li&gt;附加幂等数据只允许单项操作.如果pd要求你能给评论点赞,那么你可以告诉它只能点赞,不能取消.因为从幂等性的要求来说,每个赞都是一条记录.评论的赞数如果都从点赞表中统计得出,那么性能开销会十分巨大,而且点赞如此轻量级的一个操作一定会加剧点赞表的竞争操作.所以建议直接在评论表中添加一个like_count的计数器,该字段只增不减.&lt;/li&gt;
+&lt;li&gt;热门评论加缓存.类似于网易新闻的热门评论,读取频度非常高,可以专门开接口给客户端,同时该接口做缓存.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;####参考文献:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://blog.csdn.net/tiantiandjava/article/details/45390859&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;逻辑数据库设计-单纯的树(递归关系数据)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://qinxuye.me/article/storing-hierachical-data-in-database/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;在数据库中存储层级结构&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;http://stackoverflow.com/questions/4048151/what-are-the-options-for-storing-hierarchical-data-in-a-relational-database&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;What are the Options for Storing Hierarchical Data in a Relational Database&lt;/a&gt;    &lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;评论功能数据库设计和开发&quot;&gt;&lt;a href=&quot;#评论功能数据库设计和开发&quot; class=&quot;headerlink&quot; title=&quot;评论功能数据库设计和开发&quot;&gt;&lt;/a&gt;评论功能数据库设计和开发&lt;/h3&gt;&lt;p&gt;本文是作者在评论功能设计方面在数据库上的一些总结。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="技术" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="数据库" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+    
+      <category term="数据库" scheme="http://yoursite.com/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"/>
+    
+      <category term="设计" scheme="http://yoursite.com/tags/%E8%AE%BE%E8%AE%A1/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>android studio快捷键</title>
+    <link href="http://yoursite.com/2016/05/10/AS%E5%BF%AB%E6%8D%B7%E9%94%AE/"/>
+    <id>http://yoursite.com/2016/05/10/AS快捷键/</id>
+    <published>2016-05-09T16:00:00.000Z</published>
+    <updated>2016-05-10T07:56:54.000Z</updated>
+    
+    <content type="html">&lt;h3 id=&quot;AS快捷键&quot;&gt;&lt;a href=&quot;#AS快捷键&quot; class=&quot;headerlink&quot; title=&quot;AS快捷键&quot;&gt;&lt;/a&gt;AS快捷键&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;ctrl+D 复制粘贴&lt;/li&gt;
+&lt;li&gt;ctrl+space 提示&lt;/li&gt;
+&lt;li&gt;ctrl+shift+enter 自动匹配相对应的语法结构&lt;/li&gt;
+&lt;li&gt;ctrl+F 搜索&lt;/li&gt;
+&lt;li&gt;ctrl+句点 选中第一个item&lt;/li&gt;
+&lt;/ol&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;AS快捷键&quot;&gt;&lt;a href=&quot;#AS快捷键&quot; class=&quot;headerlink&quot; title=&quot;AS快捷键&quot;&gt;&lt;/a&gt;AS快捷键&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;ctrl+D 复制粘贴&lt;/li&gt;
+&lt;li&gt;ctrl+space 提示&lt;/li&gt;
+&lt;li&gt;ctrl+shi
+    
+    </summary>
+    
+      <category term="技术" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="工具" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E5%B7%A5%E5%85%B7/"/>
+    
+      <category term="IDE" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E5%B7%A5%E5%85%B7/IDE/"/>
+    
+    
+      <category term="Android Studio" scheme="http://yoursite.com/tags/Android-Studio/"/>
+    
+      <category term="快捷键" scheme="http://yoursite.com/tags/%E5%BF%AB%E6%8D%B7%E9%94%AE/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Markdown语法</title>
+    <link href="http://yoursite.com/2016/05/10/MD%E8%AF%AD%E6%B3%95/"/>
+    <id>http://yoursite.com/2016/05/10/MD语法/</id>
+    <published>2016-05-09T16:00:00.000Z</published>
+    <updated>2016-05-10T07:57:38.000Z</updated>
+    
+    <content type="html">&lt;h3 id=&quot;MarkDown语法&quot;&gt;&lt;a href=&quot;#MarkDown语法&quot; class=&quot;headerlink&quot; title=&quot;MarkDown语法&quot;&gt;&lt;/a&gt;MarkDown语法&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;引用:&lt;/p&gt;
+&lt;p&gt;  只需要在文本钱加入&amp;gt;这种尖括号(大于号)即可&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;例如这样&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;   要注意符号和文本间的空格.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;图片与链接:&lt;/p&gt;
+&lt;p&gt;  插入链接与插入图片的语法很像,区别在一个!号&lt;/p&gt;
+&lt;p&gt;  图片为:  &lt;code&gt;![](){ImgCap}{/ImgCap}&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;  链接为:  &lt;code&gt;[]()&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;  插入图片的地址需要图床.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;粗体与斜体:&lt;/p&gt;
+&lt;p&gt;  markdown的粗体和斜体也非常简单,用两个&lt;em&gt;包含一段文本就是粗体的语法,用一个&lt;/em&gt;包含一段文本就是斜体的语法.&lt;/p&gt;
+&lt;p&gt;   例如:&lt;strong&gt;这里是粗体&lt;/strong&gt; &lt;em&gt;这里是斜体&lt;/em&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;代码框:&lt;/p&gt;
+&lt;p&gt;  如果你是个程序猿,需要在文章里优雅的引用代码框那也很简单,只需要用两个`把中间代码包裹起来就好了.&lt;/p&gt;
+&lt;p&gt;  代码块的话要用三个`包裹.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;//helloworld.java    &lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;public static void main(arg[])&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    system.out.println(&amp;quot;hello world!&amp;quot;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;表格:&lt;/p&gt;
+&lt;p&gt;  表格是我觉得markdown比较麻烦的地方,例子如下:&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;| Tables        | Are           | Cool  |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;| ------------- |:-------------:| -----:|&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;| col 3 is      | right-aligned | $1600 |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;| col 2 is      | centered      |   $12 |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;| zebra stripes | are neat      |    $1 |&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+这种语法生成的表格如下:
+
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
+&lt;/code&gt;&lt;/pre&gt;</content>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;MarkDown语法&quot;&gt;&lt;a href=&quot;#MarkDown语法&quot; class=&quot;headerlink&quot; title=&quot;MarkDown语法&quot;&gt;&lt;/a&gt;MarkDown语法&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;引用:&lt;/p&gt;
+&lt;p&gt;  只需要在文本钱加入&amp;gt;这种尖
+    
+    </summary>
+    
+      <category term="技术" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="工具" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E5%B7%A5%E5%85%B7/"/>
+    
+      <category term="IDE" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E5%B7%A5%E5%85%B7/IDE/"/>
+    
+    
+      <category term="Markdown" scheme="http://yoursite.com/tags/Markdown/"/>
+    
+      <category term="语法" scheme="http://yoursite.com/tags/%E8%AF%AD%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>MVP架构</title>
+    <link href="http://yoursite.com/2016/05/10/MVP%E6%A1%86%E6%9E%B6/"/>
+    <id>http://yoursite.com/2016/05/10/MVP框架/</id>
+    <published>2016-05-09T16:00:00.000Z</published>
+    <updated>2016-05-10T10:48:24.000Z</updated>
+    
+    <content type="html">&lt;h4 id=&quot;什么是MVP？&quot;&gt;&lt;a href=&quot;#什么是MVP？&quot; class=&quot;headerlink&quot; title=&quot;什么是MVP？&quot;&gt;&lt;/a&gt;什么是MVP？&lt;/h4&gt;&lt;p&gt;MVP代表Model，view和Presenter。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;view层负责处理用户事件和视图部分的展示。在android中，他可能是Activity或者Fragment类。&lt;br&gt;Model层负责访问数据。数据可以是远端的Server API，本地数据库或者SharedPreference等。&lt;br&gt;Presenter层是连接（或适配）view和model的桥梁。&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;br&gt;下图是基于MVP架构的模式之一。view是UI线程。Presenter是view与model之间的适配器。UseCase或者Domain在Model层中，负责从实体获取或载入数据。依赖规则如下：&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&quot;http://static.codeceo.com/images/2016/01/c81e728d9d4c2f636f067f89cc14862c1.jpg&quot; alt=&quot;The Dependency Injection&quot;&gt;&lt;/p&gt;
+&lt;p&gt;关键是，高层接口不知道底层接口的细节，或者更准确地说，高层接口不能，不应该，并且必须不了解底层接口的细节，是（面向）抽象的，并且是细节隐藏的。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://static.codeceo.com/images/2016/01/c81e728d9d4c2f636f067f89cc14862c2.jpg&quot; alt=&quot;The higher interfaces do not know about the details of the lower ones&quot;&gt;&lt;/p&gt;
+&lt;h4 id=&quot;依赖规则？&quot;&gt;&lt;a href=&quot;#依赖规则？&quot; class=&quot;headerlink&quot; title=&quot;依赖规则？&quot;&gt;&lt;/a&gt;依赖规则？&lt;/h4&gt;&lt;p&gt;Uncle Bob 的“the Clean Architecture”描述了依赖的规则是什么。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;同心圆将软件划分为不同的区域，一般的，随着层级的深入，软件的等级也就越高。外圆是实现机制，内圆是核心策略。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;这是上面文章的摘要：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Entities：&lt;ul&gt;
+&lt;li&gt;可以是一个持有方法函数的对象&lt;/li&gt;
+&lt;li&gt;可以是一组数据结构或方法函数&lt;/li&gt;
+&lt;li&gt;它并不重要，能在项目中被不同应用程序使用即可&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Use Cases：&lt;ul&gt;
+&lt;li&gt;包含特定于应用程序的业务规则&lt;/li&gt;
+&lt;li&gt;精心编排流入Entity或从Entity流出的数据&lt;/li&gt;
+&lt;li&gt;指挥Entity直接使用项目范围内的业务规则，从而实现Use Case的目标&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Presenter，Controllers：&lt;ul&gt;
+&lt;li&gt;将Use Case和Entity中的数据转换成格式最方便的数据&lt;/li&gt;
+&lt;li&gt;外部系统，如数据库或网页能够方便的使用这些数据&lt;/li&gt;
+&lt;li&gt;完全包含GUI的MVC架构&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;External Interfaces，UI，DB&lt;ul&gt;
+&lt;li&gt;所有的细节所在&lt;/li&gt;
+&lt;li&gt;如数据库细节，Web框架细节，等等&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&quot;MVC，MVP还是MVVM？&quot;&gt;&lt;a href=&quot;#MVC，MVP还是MVVM？&quot; class=&quot;headerlink&quot; title=&quot;MVC，MVP还是MVVM？&quot;&gt;&lt;/a&gt;MVC，MVP还是MVVM？&lt;/h4&gt;&lt;p&gt;那么哪一个才是最好的呢？哪一个比其他的更优秀呢？我能只选一个吗？&lt;/p&gt;
+&lt;p&gt;答案是，NO。&lt;/p&gt;
+&lt;p&gt;这些模式的动机都是一样的。那就是如何避免复杂混乱的代码，让执行单元测试变得更容易，创造高质量应用程序。就这样。&lt;/p&gt;
+&lt;p&gt;当然，远不止这三种架构模式。而且任何一种模式都不可能是银弹，他们只是架构模式之一，不是解决问题的唯一途径。这些只是方法、手段而不是目的、目标。&lt;/p&gt;
+&lt;h4 id=&quot;利与弊&quot;&gt;&lt;a href=&quot;#利与弊&quot; class=&quot;headerlink&quot; title=&quot;利与弊&quot;&gt;&lt;/a&gt;利与弊&lt;/h4&gt;&lt;p&gt;OK，让我们回到MVP架构上。刚刚 我们了解了什么是MVP，讨论了MVP以及其他热门架构，并且介绍了MVC，MVP和MVVM三者间的不同。这是关于MVP架构利与弊的总结：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;利：&lt;ul&gt;
+&lt;li&gt;可测试（TDD）&lt;/li&gt;
+&lt;li&gt;可维护（代码复用）&lt;/li&gt;
+&lt;li&gt;容易Reviewe&lt;/li&gt;
+&lt;li&gt;信息隐蔽&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;弊：&lt;ul&gt;
+&lt;li&gt;冗余的，尤其是小型App开发&lt;/li&gt;
+&lt;li&gt;（有可能）额外的学习曲线&lt;/li&gt;
+&lt;li&gt;开始编写代码之前需要时间成本（但是我敢打赌，设计架构是所有项目开发所必需的）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&quot;show-me-the-code！！！&quot;&gt;&lt;a href=&quot;#show-me-the-code！！！&quot; class=&quot;headerlink&quot; title=&quot;show me the code！！！&quot;&gt;&lt;/a&gt;show me the code！！！&lt;/h4&gt;&lt;p&gt;这里仅展示了MVP模式的一小段结构。如果你想了解更多项目或生动的代码示例，请参考文章末尾的“链接和资源”。那里有非常丰富和设计巧妙的示例，基本都托管在Github上，以便你能clone，在设备上运行，并了解工作原理。&lt;/p&gt;
+&lt;p&gt;首先，为每一个View定义接口。&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;/**&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; *Interface classes for the Top view&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; */&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;public Interface TopView &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt; /**&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  *Initialize the view.&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  *&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  *e.g. the facade-pattern mothod for handing all ActionBar settings&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  */&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  void initViews();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  /**&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   * Open &amp;#123;@link DatePickerDialog&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   */&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  void openDatePickerDialog();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  /**&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    * Start ListActivity&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    */&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   void startListActivity();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;让我们重写TopView类，重点如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;TopActivty只是负责处理事件监听或者展示每个视图组件&lt;/li&gt;
+&lt;li&gt;所有的业务逻辑必须委托给Presenter类&lt;/li&gt;
+&lt;li&gt;在MVP中，View和Presenter是一一对应的（在MVVM中是一对多的）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;37&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;38&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;39&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;40&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;41&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;42&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;43&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;44&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;45&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;public class TopActivty extends Activity implements TopView&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  // here we use ButterKnife to inject views&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  /**&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   * Calendar Title&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   */&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   @Bind(R.id.calendar_title)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   TextView mCalendarTitle;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   private TopPresenter mTopPresenter;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   @Override&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   protected void onCreate(Bundle savedIntanceState)&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     super.onCreate(savedIntanceState);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     setContentView(R.layout.activity_top);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     ButterKnife.bind(this);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     // Save TopPresenter instance in a member variable field&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     mTopPresenter = new TopPresenter();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     mTopPresenter.onCreate(this);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   /*&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   * Overrides method from the &amp;#123;@link TopView&amp;#125; interfaces&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   */&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   @Override&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   public void initViews()&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     //ActionBar settings&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     //set event listeners&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   @Override&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   public void openDatePickerDialog()&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     DatePickerFragment.newInstace().show(getSupportFragmentManager(),DatePickerFragment.TAG);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     //do not write logic here... all logic must be passed to the Presenter&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     mTopPresenter.updateCalendarDate();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   @Override&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   public void startListActivity()&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;     startActivity(new Intent(this,ListActivity.class));&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;   &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这是Presenter类，最重要的一点是Presenter仅仅是连接View与Model的适配桥梁。比如，&lt;strong&gt; TopUseCase#saveCalendarDate()&lt;/strong&gt; 是对TopPresenter细节隐藏的，同样对TopView也是如此。你不需要关心数据结构，也不需要关心业务逻辑是如何工作。因此你可以对TopUseCase执行单元测试，因为业务逻辑与视图层是分离的。&lt;br&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;public class TopPresenter&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  @Nullable&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  private TopView mView;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  private TopUseCase mUseCase;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  public TopPresenter()&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    mUseCase = new TopUseCase();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  public void onCreate(@NonNull TopView TopView)&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    mView = TopView;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    //here you call View&amp;apos;s implemented methods&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    mView.initViews();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  public void updateCalendarDate()&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    //do not forget to return if view instances is null&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    if(mView == null)&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;      return;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    //here logic comes&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    String dateToDisplay = mUseCase.getDateToDisplay(mContex.getResources());&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    mView.updateCalendarDate(dateToDisplay);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    //here you save date, and this logic is hiden in UseCase class&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    mUseCase.saveCalendarDate();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;当然，尽管业务逻辑被实现在Activity类中，你依然可以执行单元测试，只不过这会耗费很多时间，而且有些复杂。可能需要更多的时间来运行App，相反，你本应该充分利用测试类库的性能，如Robolectric。&lt;/p&gt;
+&lt;p&gt;####　总结&lt;/p&gt;
+&lt;p&gt;这里没有万能药，而且ＭＶＰ也仅仅是解决方案之一，他可以与其他方法协同使用，同样，也可以有选择的用于不同项目。&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h4 id=&quot;什么是MVP？&quot;&gt;&lt;a href=&quot;#什么是MVP？&quot; class=&quot;headerlink&quot; title=&quot;什么是MVP？&quot;&gt;&lt;/a&gt;什么是MVP？&lt;/h4&gt;&lt;p&gt;MVP代表Model，view和Presenter。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;view层负责处理用户事件和视图部分的展示。在android中，他可能是Activity或者Fragment类。&lt;br&gt;Model层负责访问数据。数据可以是远端的Server API，本地数据库或者SharedPreference等。&lt;br&gt;Presenter层是连接（或适配）view和model的桥梁。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="技术" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="移动开发" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E7%A7%BB%E5%8A%A8%E5%BC%80%E5%8F%91/"/>
+    
+      <category term="Android" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E7%A7%BB%E5%8A%A8%E5%BC%80%E5%8F%91/Android/"/>
+    
+    
+      <category term="架构" scheme="http://yoursite.com/tags/%E6%9E%B6%E6%9E%84/"/>
+    
+      <category term="MVP" scheme="http://yoursite.com/tags/MVP/"/>
+    
+      <category term="MVC" scheme="http://yoursite.com/tags/MVC/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hello Hexo‘s World！</title>
+    <link href="http://yoursite.com/2016/05/10/hello-world/"/>
+    <id>http://yoursite.com/2016/05/10/hello-world/</id>
+    <published>2016-05-09T16:00:00.000Z</published>
+    <updated>2016-05-10T08:23:12.000Z</updated>
+    
+    <content type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;documentation&lt;/a&gt; for more info. If you get any problems when using Hexo, you can find the answer in &lt;a href=&quot;https://hexo.io/docs/troubleshooting.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;troubleshooting&lt;/a&gt; or you can ask me on &lt;a href=&quot;https://github.com/hexojs/hexo/issues&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;GitHub&lt;/a&gt;.&lt;br&gt;&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;Quick-Start&quot;&gt;&lt;a href=&quot;#Quick-Start&quot; class=&quot;headerlink&quot; title=&quot;Quick Start&quot;&gt;&lt;/a&gt;Quick Start&lt;/h2&gt;&lt;h3 id=&quot;Create-a-new-post&quot;&gt;&lt;a href=&quot;#Create-a-new-post&quot; class=&quot;headerlink&quot; title=&quot;Create a new post&quot;&gt;&lt;/a&gt;Create a new post&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo new &lt;span class=&quot;string&quot;&gt;&quot;My New Post&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/writing.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Writing&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;Run-server&quot;&gt;&lt;a href=&quot;#Run-server&quot; class=&quot;headerlink&quot; title=&quot;Run server&quot;&gt;&lt;/a&gt;Run server&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo server&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/server.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Server&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;Generate-static-files&quot;&gt;&lt;a href=&quot;#Generate-static-files&quot; class=&quot;headerlink&quot; title=&quot;Generate static files&quot;&gt;&lt;/a&gt;Generate static files&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo generate&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/generating.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Generating&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&quot;Deploy-to-remote-sites&quot;&gt;&lt;a href=&quot;#Deploy-to-remote-sites&quot; class=&quot;headerlink&quot; title=&quot;Deploy to remote sites&quot;&gt;&lt;/a&gt;Deploy to remote sites&lt;/h3&gt;&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;$ hexo deploy&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;More info: &lt;a href=&quot;https://hexo.io/docs/deployment.html&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Deployment&lt;/a&gt;&lt;/p&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt; for more info. If you get any problems when using Hexo, you can find the answer in &lt;a href=&quot;https://hexo.io/docs/troubleshooting.html&quot;&gt;troubleshooting&lt;/a&gt; or you can ask me on &lt;a href=&quot;https://github.com/hexojs/hexo/issues&quot;&gt;GitHub&lt;/a&gt;.&lt;br&gt;
+    
+    </summary>
+    
+      <category term="技术" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="工具" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E5%B7%A5%E5%85%B7/"/>
+    
+      <category term="Hexo" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E5%B7%A5%E5%85%B7/Hexo/"/>
+    
+    
+      <category term="语法" scheme="http://yoursite.com/tags/%E8%AF%AD%E6%B3%95/"/>
+    
+      <category term="Hexo" scheme="http://yoursite.com/tags/Hexo/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>正则表达式</title>
+    <link href="http://yoursite.com/2016/05/10/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
+    <id>http://yoursite.com/2016/05/10/正则表达式/</id>
+    <published>2016-05-09T16:00:00.000Z</published>
+    <updated>2016-05-10T08:24:32.000Z</updated>
+    
+    <content type="html">&lt;h4 id=&quot;正则表达式-语法&quot;&gt;&lt;a href=&quot;#正则表达式-语法&quot; class=&quot;headerlink&quot; title=&quot;正则表达式-语法&quot;&gt;&lt;/a&gt;正则表达式-语法&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;限定符&lt;/p&gt;
+&lt;p&gt;限定符用来指定正则表达式中的一个给定组件必须要出现多少次才能满足匹配。有*或+或？或{n}或{n，}或{n，m}共6种。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;ul&gt;
+&lt;li&gt;：匹配前面的子表达式零次或多次。等价于{0，}。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;+：匹配前面的子表达式一次或多次。等价于{1，}。&lt;/li&gt;
+&lt;li&gt;？：匹配前面的子表达式零次或一次。等价于{0,1}。&lt;/li&gt;
+&lt;li&gt;{n}：n是一个非负整数。匹配确定的n次。&lt;/li&gt;
+&lt;li&gt;{n，}：n是一个非负整数。至少匹配n次。&lt;/li&gt;
+&lt;li&gt;{n，m}：m和n均为非负整数，其中n&amp;lt;=m。最好匹配n次且最多匹配m次。请注意在逗号和两个数之间不能有空格。&lt;a id=&quot;more&quot;&gt;&lt;/a&gt;
+限定符出现在范围表达式之后。因此，它应用于整个范围表达式。* 、+和？限定符都是贪婪的，因为他们毁尽可能多的匹配文字，只有在他们的后面加上一个？就可以实现非贪婪或最小匹配。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;定位符&lt;/p&gt;
+&lt;p&gt;定位符使您能够将正则表达式固定到行首或行尾。他们还使您能够创建这样的正则表达式，这些正则表达式出现在一个单词内、在一个单词的开头或者一个单词的结尾。&lt;/p&gt;
+&lt;p&gt;定位符用来描述字符串或单词的边界，^和$分别指字符串的开始与结束，\b描述单词的前或后边界，\B表示非单词边界。&lt;/p&gt;
+&lt;p&gt;正则表达式的限定符有：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;^：匹配&lt;strong&gt;输入字符串开始&lt;/strong&gt;的位置。如果设置了RegExp对象的Multiline属性，^还会与\n或\r之后的位置匹配。&lt;/li&gt;
+&lt;li&gt;$：匹配&lt;strong&gt;输入字符串结尾&lt;/strong&gt;的位置。如果设置了RegExp对象的Multiline属性，$还会与\n或\r之后的位置匹配。&lt;/li&gt;
+&lt;li&gt;\b：匹配一个字边界，即字与空格件的位置。&lt;/li&gt;
+&lt;li&gt;\B：非字边界匹配。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;注意&lt;/strong&gt;：不能将限定符与定点符一起使用。由于在紧靠换行或者字边界的前面或后面不能有一个以上位置，因此不允许诸如^* 之类的表达式。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;选择&lt;/p&gt;
+&lt;p&gt;用圆括号将所有选择项括起来，相邻的选择项之间用|分隔。但是圆括号会有一个副作用，是相关的匹配会被缓存，此时用？：放在第一个选项前来消除这种副作用。&lt;/p&gt;
+&lt;p&gt;其中？：是非捕获元之一，还有两个非捕获元是？=和？！，这两个还有更多的含义，前者为正向预查，在任何开始匹配圆括号内的正则表达式模式的位置来匹配搜索字符串，后者为负向预查，在任何开始不匹配该正则表达式模式的位置来匹配搜索字符串。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;反向引用&lt;/p&gt;
+&lt;p&gt;对于一个正则表达式模式或部分模式两边添加圆括号将导致相关匹配存储到一个临时缓冲区中，所捕获的每个自匹配都按照在正则表达式模式中从左到右出现的顺序存储。缓冲区编号从1开始，最多可存储99个捕获的子表达式。每个缓冲区都可以使用‘\n’访问，其中n为一个标识特定缓冲区的一位或两位十进制数。&lt;/p&gt;
+&lt;p&gt;可以使用非捕获元字符 ‘？：’、‘？=’或‘？！’来重写捕获，忽略对相关匹配的保存。&lt;/p&gt;
+&lt;p&gt;反向引用的最简单的、最有用的应用之一，是提供查找文本中两个相同的相邻单词的匹配项的能力。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&quot;正则表达式-元字符&quot;&gt;&lt;a href=&quot;#正则表达式-元字符&quot; class=&quot;headerlink&quot; title=&quot;正则表达式-元字符&quot;&gt;&lt;/a&gt;正则表达式-元字符&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;下表包含了元字符的完整列表以及他们在正则表达式上下文中的行为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;\:将下一个字符标记为一个特殊字符、或将一个原义字符、或一个后向引用、或一个八进制转义符。例如，‘n’匹配字符“n”。‘\n’匹配一个换行符。序列‘\’匹配“\”而“(”则匹配“（”。&lt;/li&gt;
+&lt;li&gt;.：匹配除“\n”之外的任何单个字符。要匹配包括‘\n’在内的任何字符，请使用像‘[.\n]’的模式。&lt;/li&gt;
+&lt;li&gt;(pattern):匹配pattern并获取这一匹配。所获取的匹配可以从产生的Matches集合得到，在VBScript中使用SubMatches集合，在JScript中则使用$0…$9属性。要匹配圆括号字符，请使用‘(’或‘)’。&lt;/li&gt;
+&lt;li&gt;(?:pattern):匹配pattern但不获取匹配结果，也就是说这是一个非获取匹配，不进行存储供以后使用。这在使用”或”字符(|)来组合一个模式的各个部分是很有用。例如，‘industr(?:y|ies)’就是一个比‘industry|industries’更简略的表达式。&lt;/li&gt;
+&lt;li&gt;(?=pattern):正向预查，在任何匹配pattern的字符串开始处匹配查找字符串。这是一个非获取匹配，也就是说，该匹配不需要获取供以后使用。例如，’Windows (?=95|98|NT|2000)’ 能匹配 “Windows 2000” 中的 “Windows” ，但不能匹配 “Windows 3.1” 中的 “Windows”。预查不消耗字符，也就是说，在一个匹配发生后，在最后一次匹配之后立即开始下一次匹配的搜索，而不是从包含预查的字符之后开始。&lt;/li&gt;
+&lt;li&gt;(?!pattern):负向预查，在任何不匹配pattern的字符串开始处匹配查找字符串。这是一个非获取匹配，也就是说，该匹配不需要获取供以后使用。例如’Windows (?!95|98|NT|2000)’ 能匹配 “Windows 3.1” 中的 “Windows”，但不能匹配 “Windows 2000” 中的 “Windows”。预查不消耗字符，也就是说，在一个匹配发生后，在最后一次匹配之后立即开始下一次匹配的搜索，而不是从包含预查的字符之后开始。&lt;/li&gt;
+&lt;li&gt;x|y：匹配x或y。例如，‘z|food’能匹配“z”或“food”。‘(z|f)ood’则匹配“zood”或“food”。&lt;/li&gt;
+&lt;li&gt;[xyz]:字符集合。匹配所包含的任意一个字符。例如，’[abc]’可以匹配“plain”中的’a’。&lt;/li&gt;
+&lt;li&gt;[^xyz]:负值字符集合。匹配未包含的任意字符。例如，’[^abc]’可以匹配”plain”中的’p’、’l’、’i’、’n’。&lt;/li&gt;
+&lt;li&gt;[a-z]:字符范围。匹配制定范围内的任意字符。&lt;/li&gt;
+&lt;li&gt;[^a-z]:负值字符集合。匹配任何不在指定范围内的任意字符。&lt;/li&gt;
+&lt;li&gt;\b:匹配一个单词边界，也就是指单词和空格间的位置。例如， ‘er\b’ 可以匹配”never” 中的 ‘er’，但不能匹配 “verb” 中的 ‘er’。&lt;/li&gt;
+&lt;li&gt;\B:匹配非单词边界。’er\B’ 能匹配 “verb” 中的 ‘er’，但不能匹配 “never” 中的 ‘er’。&lt;/li&gt;
+&lt;li&gt;\cx:匹配由x指明的控制字符。例如，\cM匹配一个Control-M或回车符。x的值必须为A-Z或a-z之一。否则，将c视为一个原义的‘c’字符。&lt;/li&gt;
+&lt;li&gt;\d:匹配一个数字字符。等价于[0-9]。&lt;/li&gt;
+&lt;li&gt;\D:匹配一个非数字字符。等价于[^0-9]。&lt;/li&gt;
+&lt;li&gt;\f:匹配一个换行符。等价于\xOc和\cL。&lt;/li&gt;
+&lt;li&gt;\n     匹配一个换行符。等价于 \x0a 和 \cJ。&lt;/li&gt;
+&lt;li&gt;\r     匹配一个回车符。等价于 \x0d 和 \cM。&lt;/li&gt;
+&lt;li&gt;\s     匹配任何空白字符，包括空格、制表符、换页符等等。等价于 [ \f\n\r\t\v]。&lt;/li&gt;
+&lt;li&gt;\S     匹配任何非空白字符。等价于 [^ \f\n\r\t\v]。&lt;/li&gt;
+&lt;li&gt;\t     匹配一个制表符。等价于 \x09 和 \cI。&lt;/li&gt;
+&lt;li&gt;\v     匹配一个垂直制表符。等价于 \x0b 和 \cK。&lt;/li&gt;
+&lt;li&gt;\w     匹配包括下划线的任何单词字符。等价于’[A-Za-z0-9_]’。&lt;/li&gt;
+&lt;li&gt;\W     匹配任何非单词字符。等价于 ‘[^A-Za-z0-9_]’。&lt;/li&gt;
+&lt;li&gt;\xn     匹配 n，其中 n 为十六进制转义值。十六进制转义值必须为确定的两个数字长。例如，’\x41’ 匹配 “A”。’\x041’ 则等价于 ‘\x04’ &amp;amp; “1”。正则表达式中可以使用 ASCII 编码。&lt;/li&gt;
+&lt;li&gt;\num     匹配 num，其中 num 是一个正整数。对所获取的匹配的引用。例如，’(.)\1’ 匹配两个连续的相同字符。&lt;/li&gt;
+&lt;li&gt;\n     标识一个八进制转义值或一个向后引用。如果 \n 之前至少 n 个获取的子表达式，则 n 为向后引用。否则，如果 n 为八进制数字 (0-7)，则 n 为一个八进制转义值。&lt;/li&gt;
+&lt;li&gt;\nm     标识一个八进制转义值或一个向后引用。如果 \nm 之前至少有 nm 个获得子表达式，则 nm 为向后引用。如果 \nm 之前至少有 n 个获取，则 n 为一个后跟文字 m 的向后引用。如果前面的条件都不满足，若 n 和 m 均为八进制数字 (0-7)，则 \nm 将匹配八进制转义值 nm。&lt;/li&gt;
+&lt;li&gt;\nml     如果 n 为八进制数字 (0-3)，且 m 和 l 均为八进制数字 (0-7)，则匹配八进制转义值 nml。&lt;/li&gt;
+&lt;li&gt;\un     匹配 n，其中 n 是一个用四个十六进制数字表示的 Unicode 字符。例如， \u00A9 匹配版权符号 (?)。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&quot;正则表达式-运算符优先级&quot;&gt;&lt;a href=&quot;#正则表达式-运算符优先级&quot; class=&quot;headerlink&quot; title=&quot;正则表达式-运算符优先级&quot;&gt;&lt;/a&gt;正则表达式-运算符优先级&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;正则表达式从左到右进行计算，并遵循优先级顺序，这与算术表达式非常类似。&lt;/p&gt;
+&lt;p&gt;相同优先级的从左到右进行运算，不同优先级的运算先高后低。下面从最高到最低说明了各种正则表达式运算符的优先级顺序：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;\: 转义符&lt;/li&gt;
+&lt;li&gt;(), (?:), (?=), []：圆括号和方括号&lt;/li&gt;
+&lt;li&gt;&lt;ul&gt;
+&lt;li&gt;, +, ?, {n}, {n,}, {n,m}：限定符&lt;br&gt;^, $, \任何元字符、任何字符     定位点和序列（即：位置和顺序）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;|：替换，”或”操作&lt;br&gt;字符具有高于替换运算符的优先级，使得”m|food”匹配”m”或”food”。若要匹配”mood”或”food”，请使用括号创建子表达式，从而产生”(m|f)ood”。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&quot;正则表达式-匹配规则&quot;&gt;&lt;a href=&quot;#正则表达式-匹配规则&quot; class=&quot;headerlink&quot; title=&quot;正则表达式-匹配规则&quot;&gt;&lt;/a&gt;正则表达式-匹配规则&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;基本模式匹配&lt;/p&gt;
+&lt;p&gt;一切从最基本的开始。模式，是正则表达式最基本的元素，他们是一组描述字符串特征的字符。模式可以很简单，由普通的字符串组成，也可以非常复杂，往往用特殊的字符表示一个范围内的字符、重复出现，或表示上下文。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;字符簇&lt;/p&gt;
+&lt;p&gt;在Internet的程序中，正则表达式通常用来验证用户的输入。当用户提交了一个Form以后，要判断输入的电话号码、地址、Email地址、信用卡号码等是否有效，用普通的基于字面的字符是不够的。所以要用一个中更自由的描述我们要的模式的方法，他就是字符簇。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;匹配所有的数字，句号和减号&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;code&gt;[0-9\.\-]&lt;/code&gt;  &lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;匹配所有的白字符&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;code&gt;[ \f\r\t\n]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;PHP的正则表达式有一些内置的通用字符簇：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;[[:alpha:]]     任何字母&lt;/li&gt;
+&lt;li&gt;[[:digit:]]     任何数字&lt;/li&gt;
+&lt;li&gt;[[:alnum:]]     任何字母和数字&lt;/li&gt;
+&lt;li&gt;[[:space:]]     任何空白字符&lt;/li&gt;
+&lt;li&gt;[[:upper:]]     任何大写字母&lt;/li&gt;
+&lt;li&gt;[[:lower:]]     任何小写字母&lt;/li&gt;
+&lt;li&gt;[[:punct:]]     任何标点符号&lt;/li&gt;
+&lt;li&gt;[[:xdigit:]]     任何16进制的数字，相当于[0-9a-fA-F]&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;确定重复出现&lt;/p&gt;
+&lt;p&gt;到现在为止，你已经知道如何去匹配一个字母或数字，但更多的情况下，可能要匹配一个单词或一组数字。一个单词有若干个字母组成，一组数字有若干个单数组成。跟在字符或字符簇后面的花括号({})用来确定前面的内容的重复出现的次数。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;^[a-zA-Z_]$ ——–     所有的字母和下划线&lt;/li&gt;
+&lt;li&gt;^[[:alpha:]]{3}$     ——–所有的3个字母的单词&lt;/li&gt;
+&lt;li&gt;^a$ ——–    字母a&lt;/li&gt;
+&lt;li&gt;^a{4}$     ——–aaaa&lt;/li&gt;
+&lt;li&gt;^a{2,4}$ ——–    aa,aaa或aaaa&lt;/li&gt;
+&lt;li&gt;^a{1,3}$     ——–a,aa或aaa&lt;/li&gt;
+&lt;li&gt;^a{2,}$ ——–    包含多于两个a的字符串&lt;/li&gt;
+&lt;li&gt;^a{2,} ——–    如：aardvark和aaab，但apple不行&lt;/li&gt;
+&lt;li&gt;a{2,} ——–    如：baad和aaa，但Nantucket不行&lt;/li&gt;
+&lt;li&gt;\t{2} ——–    两个制表符&lt;/li&gt;
+&lt;li&gt;.{2}     ——– 所有的两个字符&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+    
+    <summary type="html">
+    
+      &lt;h4 id=&quot;正则表达式-语法&quot;&gt;&lt;a href=&quot;#正则表达式-语法&quot; class=&quot;headerlink&quot; title=&quot;正则表达式-语法&quot;&gt;&lt;/a&gt;正则表达式-语法&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;限定符&lt;/p&gt;
+&lt;p&gt;限定符用来指定正则表达式中的一个给定组件必须要出现多少次才能满足匹配。有*或+或？或{n}或{n，}或{n，m}共6种。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;ul&gt;
+&lt;li&gt;：匹配前面的子表达式零次或多次。等价于{0，}。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;+：匹配前面的子表达式一次或多次。等价于{1，}。&lt;/li&gt;
+&lt;li&gt;？：匹配前面的子表达式零次或一次。等价于{0,1}。&lt;/li&gt;
+&lt;li&gt;{n}：n是一个非负整数。匹配确定的n次。&lt;/li&gt;
+&lt;li&gt;{n，}：n是一个非负整数。至少匹配n次。&lt;/li&gt;
+&lt;li&gt;{n，m}：m和n均为非负整数，其中n&amp;lt;=m。最好匹配n次且最多匹配m次。请注意在逗号和两个数之间不能有空格。
+    
+    </summary>
+    
+      <category term="技术" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/"/>
+    
+      <category term="综合" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E7%BB%BC%E5%90%88/"/>
+    
+      <category term="正则表达式" scheme="http://yoursite.com/categories/%E6%8A%80%E6%9C%AF/%E7%BB%BC%E5%90%88/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
+    
+    
+      <category term="语法" scheme="http://yoursite.com/tags/%E8%AF%AD%E6%B3%95/"/>
+    
+      <category term="正则表达式" scheme="http://yoursite.com/tags/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/"/>
+    
+  </entry>
+  
+</feed>

@@ -1,0 +1,801 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    
+
+    <title>Android点击事件处理 | 杨理清的技术博客</title>
+    <meta name="author" content="Eric Yang">
+    
+    <meta name="description" content="该文章是我在极客学院Wiki学习时整理所得.">
+    
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <meta property="og:title" content="Android点击事件处理"/>
+    <meta property="og:site_name" content="Hello Eric’world!!"/>
+
+    
+    <meta property="og:image" content="undefined"/>
+    
+
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="alternate" href="/atom.xml" title="Hello Eric’world!!" type="application/atom+xml">
+    <link rel="stylesheet" href="/css/lib/materialize.min.css">
+    <link rel="stylesheet" href="/css/lib/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+
+    
+        <link rel="stylesheet" href="/css/lib/prettify-tomorrow-night-eighties.css" type="text/css">
+    
+    <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+</head>
+
+
+<body>
+    <img src="/weixin_favicon.png" style="position: absolute; left: -9999px; opacity: 0; filter: alpha(opacity=0);">
+
+    <nav class="indigo">
+    <div class="nav-wrapper">
+        <a href="#" data-activates="main-menu" class="button-collapse">
+            <i class="fa fa-navicon"></i>
+        </a>
+        <div class="">
+            <a href="/" class="brand-logo hide-on-med-and-down">Hello Eric’world!!</a>
+            <ul class="right hide-on-med-and-down">
+                
+                    <li>
+                        <a class="menu-home " href="/" >
+                            <i class="fa fa-home "></i>
+                            
+                            首页
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-archive " href="/archives" >
+                            <i class="fa fa-archive "></i>
+                            
+                            归档
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                            <i class="fa fa-bookmark "></i>
+                            
+                            分类
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-reading " href="/reading" >
+                            <i class="fa fa-book "></i>
+                            
+                            读书
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-about " href="/about" >
+                            <i class="fa fa-user "></i>
+                            
+                            关于
+                        </a>
+                    </li>
+                
+                    <li>
+                        <a class="menu-search modal-trigger " href="#search" >
+                            <i class="fa fa-search "></i>
+                            
+                            搜索
+                        </a>
+                    </li>
+                
+            </ul>
+            <div>
+    <ul class="side-nav indigo darken-1" id="main-menu">
+        
+        <li class="side-user">
+            <div class="row">
+                <div class="col s4 no-padding">
+                    <img class="avatar-image circle responsive-img" src="http://ww2.sinaimg.cn/small/74990035jw1f1rjkd681bj20rs0rsdhg.jpg" alt="User Avatar">
+                </div>
+                <div class="info col s8 valign-wrapper no-padding">
+                    <div class="valign">
+                        <p class="name">杨理清</p>
+                        <p class="desc">Java/android/技术宅</p>
+                    </div>
+                </div>
+            </div>
+        </li>
+        
+
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-home " href="/" >
+                    <i class="fa fa-home "></i>
+                    
+                    首页
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-archive " href="/archives" >
+                    <i class="fa fa-archive "></i>
+                    
+                    归档
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-category category-menu" href="javascript:;" data-activates="category-menu" >
+                    <i class="fa fa-bookmark "></i>
+                    
+                    分类
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-reading " href="/reading" >
+                    <i class="fa fa-book "></i>
+                    
+                    读书
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-about " href="/about" >
+                    <i class="fa fa-user "></i>
+                    
+                    关于
+                </a>
+            </li>
+        
+            <li class="no-padding">
+                <a class="waves-effect menu-search modal-trigger " href="#search" >
+                    <i class="fa fa-search "></i>
+                    
+                    搜索
+                </a>
+            </li>
+        
+    </ul>
+
+    <ul class="side-nav indigo darken-1" id="category-menu">
+    
+
+            
+
+            <li class="collapse-level-0" collapse-level="0">
+                <a class="no-padding" href="/categories/技术/">
+                    技术 <span class="right">7 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-1" collapse-level="1">
+                <a class="no-padding" href="/categories/技术/工具/">
+                    工具 <span class="right">3 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-2" collapse-level="2">
+                <a class="no-padding" href="/categories/技术/工具/Hexo/">
+                    Hexo <span class="right">1 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-2" collapse-level="2">
+                <a class="no-padding" href="/categories/技术/工具/IDE/">
+                    IDE <span class="right">2 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-1" collapse-level="1">
+                <a class="no-padding" href="/categories/技术/移动开发/">
+                    移动开发 <span class="right">1 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-2" collapse-level="2">
+                <a class="no-padding" href="/categories/技术/移动开发/Android/">
+                    Android <span class="right">1 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-1" collapse-level="1">
+                <a class="no-padding" href="/categories/技术/综合/">
+                    综合 <span class="right">1 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-2" collapse-level="2">
+                <a class="no-padding" href="/categories/技术/综合/正则表达式/">
+                    正则表达式 <span class="right">1 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-1" collapse-level="1">
+                <a class="no-padding" href="/categories/技术/Android/">
+                    Android <span class="right">1 篇</span></a>
+                </a>
+            </li>
+
+        
+
+            <li class="collapse-level-1" collapse-level="1">
+                <a class="no-padding" href="/categories/技术/数据库/">
+                    数据库 <span class="right">1 篇</span></a>
+                </a>
+            </li>
+
+        
+
+    </ul>
+</div>
+
+        </div>
+    </div>
+</nav>
+
+<div id="search" class="modal search-modal">
+    <div class="row">
+        <div class="input-field col s12">
+              <input id="search-input" type="text">
+              <label for="search-input">搜索</label>
+        </div>
+
+    </div>
+    <div id="search-result" class="search-result col s12">
+
+    </div>
+</div>
+
+
+    <main>
+        <div class="container main-container">
+    <nav class="page-nav hide-on-small-only">
+    <div class="nav-wrapper indigo">
+        <span class="breadcrumb">当前位置（分类目录）</span>
+        
+            
+    
+    
+    <a class="breadcrumb" href="/categories/技术/">技术</a><a class="breadcrumb" href="/categories/技术/Android/">Android</a>
+
+
+        
+
+        
+    </div>
+</nav>
+
+<article>
+    <div class="card">
+        <div class="card-content">
+            
+
+            <div class="article-title">
+                
+    
+        <h1>Android点击事件处理</h1>
+    
+
+
+            </div>
+            <time class="pink-link-context" datetime="2016-05-12T16:00:00.000Z"><a href="/2016/05/13/点击事件处理/">2016-05-13</a></time>
+
+            
+    <div class="tags-row">
+        
+            <a href="/tags/点击事件/" class="chip pink lighten-1">点击事件</a>
+        
+            <a href="/tags/Android/" class="chip pink lighten-1">Android</a>
+        
+    </div>
+
+
+            <div class="toc pink-link-context hide-on-med-and-down">
+    <ol class="section table-of-contents"><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#安卓系统点击事件处理"><span class="section table-of-contents-text">安卓系统点击事件处理</span></a></li><li class="section table-of-contents-item section table-of-contents-level-3"><a class="section table-of-contents-link" href="#自定义点击事件处理"><span class="section table-of-contents-text">自定义点击事件处理</span></a></li></ol>
+</div>
+
+
+            <div class="entry pink-link-context">
+                <p>该文章是我在极客学院Wiki学习时整理所得.<br><a id="more"></a></p>
+<h3 id="安卓系统点击事件处理"><a href="#安卓系统点击事件处理" class="headerlink" title="安卓系统点击事件处理"></a>安卓系统点击事件处理</h3><ul>
+<li>用户的点击事件均被包装为MotionEvent</li>
+<li>MotionEvent描述了用户的行为<ul>
+<li>ACTION_DOWN</li>
+<li>ACTION_UP</li>
+<li>ACTION_MOVE</li>
+<li>ACTION_POINTER_DOWN</li>
+<li>ACTION_POINTER_UP</li>
+<li>ACTION_CANCEL</li>
+<li>使用MotionEventCompat.getActionMasker(ev)获取MotionEvent对应的action</li>
+</ul>
+</li>
+<li>MotionEvent还包括以下信息<ul>
+<li>点击的位置(x,y坐标)</li>
+<li>触点的数量(手指)</li>
+<li>事件发生的时间戳</li>
+</ul>
+</li>
+<li>任何一个手势,都是以ACTION_DOWN起始,ACTION_UP结束</li>
+<li>事件从Activity的dispatchTouchEvent()函数开始,沿着View层次树依次向下传递<ul>
+<li>父元素把事件dispatch到子元素</li>
+<li>事件能在任意阶段被intercept</li>
+</ul>
+</li>
+<li>事件会沿着View的层次树依次向下传递,然后有反向向上传递,知道被”消费”<ul>
+<li>View如果对手势感兴趣,就必须消费掉ACTION_DOWN的事件</li>
+<li>出于性能的考虑,同一手势的后续事件将不会按照完整的路径进行传递,而是直接传递到消费了ACTION_DOWN事件的View</li>
+<li>如果所有的View(ViewGroup)都没有消费掉事件,那它将传递到Activity的onTouchEvent()函数中,并结束传递过程,即如果没有被消费,也不会在继续传递了</li>
+</ul>
+</li>
+<li>可选的OnTouchListener能在任一View(ViewGroup)上intercept事件,事件被intercept之后,后面的调用将被传入ACTION_CANCEL?啥意思??</li>
+<li>Activity.dispatchTouchEvent()<ul>
+<li>总是首先被调用</li>
+<li>Sends event to root view attached to Window</li>
+<li>如果所有的View(ViewGroup)都没有消费该事件,那么Activity.onTouchEvent()将被调用,而且这个函数是最后一个被调用的函数</li>
+</ul>
+</li>
+<li>ViewGroup.dispatchTouchEvent()<ul>
+<li>首先调用onInterceptTouchEvent()函数,判断是否需要拦截<ul>
+<li>检查是否应该替代自View的处理</li>
+<li>Passes ACTION_CANCEL to active child</li>
+<li>如果要消费掉同一手势的所有后续事件,需要返回true</li>
+</ul>
+</li>
+<li>对所有的孩子,以添加顺序的逆序进行遍历<ul>
+<li>如果点击在孩子的边界内,则调用child.dispatchTouchEvent()</li>
+<li>如果没有被当前的孩子消费,则传递到下一个孩子</li>
+</ul>
+</li>
+<li>如果所有的孩子都未消费该事件,则传递给listener,OnTouchListener.onTouch()</li>
+<li>如果没有listener,或者listener也未消费,则自己处理,调用ViewGroup.onTouchEvent()</li>
+<li>Intercepted events jump over child step</li>
+</ul>
+</li>
+<li>View.dispatchTouchEvent()<ul>
+<li>如果被设置了OnTouchListener,那么将先把事件发送到listener,调用View.OnTouchListener.onTouch()</li>
+<li>如果listener没有消费事件,将调用View.onTouchEvent(),即自己处理点击事件</li>
+</ul>
+</li>
+<li>小结<ul>
+<li>手势以ACTION_DOWN起始,以ACTION_UP结束</li>
+<li>ACTION_DOWN,在每一层View上都会调用dispatchTouchEvent(),该View会判断是否对接下来的手势感兴趣,后续的点击事件将直接传递到感兴趣的View</li>
+<li>ViewGroup可以intercept一个手势,因为onInterceptTouchEvent()是在dispatchTouchEvent()函数中最先被调用的,如果onInterceptTouchEvent()返回true,它的孩子将不会收到该手势的后续事件</li>
+</ul>
+</li>
+</ul>
+<h3 id="自定义点击事件处理"><a href="#自定义点击事件处理" class="headerlink" title="自定义点击事件处理"></a>自定义点击事件处理</h3><ul>
+<li>途径<ul>
+<li>(View/ViewGroup子类,Target)重载onTouchEvent()函数</li>
+<li>为Target设置OnTouchListener</li>
+</ul>
+</li>
+<li>消费事件(onTouchEvent())<ul>
+<li>ACTION_DOWN:如果对手势感兴趣,那么ACTION_DOWN的event就要返回true,即便对于ACTION_DOWN不感兴趣</li>
+<li>后续的事件,同样返回true,结束事件的处理流程(不会再传递给其他view或者parent view)</li>
+</ul>
+</li>
+<li>ViewConfiguration的一些有用方法:<ul>
+<li>getScaledTouchSlop():判断一个移动距离是否为drag</li>
+<li>getScaledMinimumFlingVelocity():判断一个拖拽速度是否为fling</li>
+<li>getLongPressTimeOut():判断一个touch时间段是否为long press</li>
+</ul>
+</li>
+<li>传递点击事件:调用target的dispatchTouchEvent(),不要直接调用target的onTouchEvent()</li>
+<li>ViewGroup拦截点击事件<ul>
+<li>重载onInterceptTouchEvent()</li>
+<li>如果对当前的手势感兴趣,onInterceptTouchEvent()返回true,之后的点击事件将不再经过onInterceptTouchEvent()函数</li>
+<li>其他的target(之前消费事件的View/ViewGroup)将收到ACTION_CANCEL</li>
+</ul>
+</li>
+<li>一些建议/警告<ul>
+<li>尽量调用super的对应方法,父类中已经做了很多基础工作了</li>
+<li>ACTION_MOVE的处理中,检查移动距离是否超过slop(getScaledTouchSlop())</li>
+<li>处理ACTION_CANCEL事件,父View可能会拦截事件,ACTION_CANCEL后需要重置状态,且之后该手势将不会再收到任何事件</li>
+<li>intercept之后,该手势之后的所有事件都将被拦截,所以不要轻易拦截</li>
+</ul>
+</li>
+<li>多触点事件响应<ul>
+<li>MotionEvent.getPointerCount()：获取当前屏幕上的触点数量</li>
+<li>ACTION_POINTER_DOWN，ACTION_POINTER_UP用来响应次触点的事件,MotionEvent.getActionMasked(),MotionEvent.getActionIndex()</li>
+<li>MotionEvent的有些方法会有两个版本，带index参数的，用于获取第index个触点的数据；不带参数的，获取主触点（第一个触点）的数据</li>
+</ul>
+</li>
+<li>批量处理<ul>
+<li>出于效率的考虑,ACTION_MOVE可以被打包到一个MotionEvent进行处理</li>
+<li>最近一次(本次)事件的信息,通过标准的方法获取:getX(),getY(),getEventTime()</li>
+<li>本次和最早一次ACTION_MOVE的信息,通过相应historical的方法获取<ul>
+<li>getHistorySize()获取打包的数量</li>
+<li>getHistorical*(pos)获取第一个触点的第pos个历史事件的信息</li>
+<li>getHistorical*(index,pos)获取第index个触点的第pos个历史事件的信息</li>
+</ul>
+</li>
+<li>Can reconstruct all events as they occurred in time for maximum precision</li>
+</ul>
+</li>
+<li>System Touch Handlers<ul>
+<li>不要首先就考虑使用自定义的事件处理方式</li>
+<li>OnClickListener</li>
+<li>OnLongClickListener</li>
+<li>OnTouchListener<ul>
+<li>监听每一个MotionEvent,而不需要编写子类</li>
+<li>可以在Listener中消费事件</li>
+<li>view的onTouchEvent处理中,优先调用的是listener的处理函数</li>
+</ul>
+</li>
+<li>OnScrollListener / View.onScrollChanged()</li>
+<li>GestureDetector<ul>
+<li>onDown(),onSingleTapUP(),onDoubleTap()</li>
+<li>onLongPress()</li>
+<li>onScroll()(缓慢滚动)</li>
+<li>onFLing()(快速滚动后释放手机)</li>
+</ul>
+</li>
+<li>ScaleGestureDetector<ul>
+<li>onScaleBegin(),onScale(),OnScaleEnd()</li>
+</ul>
+</li>
+<li>一个拓展的gesture detector库:android-gesture-detectors</li>
+<li>通过OnTouchListener或者onTouchEvent()进行处理</li>
+<li>缺点<ul>
+<li>Consume UP events and exposes no interface for CANCEL events</li>
+<li>May require added touch handling if these cases need special handling (e.g. reset a View’s appearance)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Touch Delegate<ul>
+<li>Specialized object to assist in forwarding touches from a parent view to its child</li>
+<li>Allows for the touch area of a specific view to be different than its actual bounds</li>
+<li>Called in onTouchEvent() of attached View（Events have to make it that far without being consumed by a child or listener）</li>
+<li>TouchDelegate is designed to be set on the PARENT and passed the CHILD view that touches should be forwarded to</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ViewGroup parent;</span><br><span class="line">View child;</span><br><span class="line">Rect touchArea;</span><br><span class="line">parent.setTouchDelegate(new TouchDelegate(touchArea, child));</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>ViewDragHelper<br>快速处理view拖拽的辅助类.</p>
+<ul>
+<li>创建ViewDragHelper:</li>
+</ul>
+<p><code>mDragHelper = ViewDragHelper.create(this, 1.0f, new DragHelperCallback());</code></p>
+<ul>
+<li>把ViewGroup的点击事件传递给ViewDragHelper:</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public boolean onInterceptTouchEvent(MotionEvent event) &#123;</span><br><span class="line">  if (mDragHelper.shouldInterceptTouchEvent(event)) &#123;</span><br><span class="line">          return true;</span><br><span class="line">  &#125;</span><br><span class="line">  return super.onInterceptTouchEvent(event);</span><br><span class="line">&#125;</span><br><span class="line">@Override</span><br><span class="line">public boolean onTouchEvent(MotionEvent event) &#123;</span><br><span class="line">  mDragHelper.processTouchEvent(event);</span><br><span class="line">  return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>ViewDragHelper.Callback的实现类DragHelperCallback中，重载感兴趣的函数，实现自己的逻辑</li>
+<li>有一个用于边缘拖拽结束activity的库，边缘拖拽使用的就是ViewDragHelper：Slidr</li>
+</ul>
+
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+    <section id="comment">
+        <div class="card">
+            <div class="card-content">
+                <!-- Duoshuo Comment BEGIN -->
+                <div class="ds-thread" data-thread-key="2016/05/13/点击事件处理/" data-title="Android点击事件处理" data-url="http://yoursite.com/2016/05/13/点击事件处理/"></div>
+
+                <script type="text/javascript">
+                    console.log(document.querySelector('.ds-thread'));
+                    var duoshuoQuery = {
+                        short_name: '18633847058'
+                    };
+                    (function() {
+                        var ds = document.createElement('script');
+                        ds.type = 'text/javascript';
+                        ds.async = true;
+                        ds.src = (document.location.protocol == 'https:'
+                            ? 'https:'
+                            : 'http:') + '//static.duoshuo.com/embed.js';
+                        ds.charset = 'UTF-8';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+                    })();
+                </script>
+                <!-- Duoshuo Comment END -->
+            </div>
+        </div>
+    </section>
+
+
+
+</div>
+
+        <div class="fixed-action-btn float-sitemap">
+    <a class="btn-floating btn-large pink">
+      <i class="fa fa-caret-square-o-up"></i>
+    </a>
+    <ul>
+      <li><a class="btn-return-top btn-floating waves-effect green" title="回到顶部"><i class="fa fa-arrow-circle-o-up"></i></a></li>
+      <li><a class="btn-floating waves-effect button-collapse yellow darken-1"  data-activates="main-menu" title="menu"><i class="fa fa-navicon"></i></a></li>
+    </ul>
+  </div>
+
+    </main>
+    <footer class="page-footer indigo darken-1">
+    
+    <div class="container">
+        <div class="row">
+            
+            <div class="social-group col m3 s12">
+                <h5 class="white-text">社交</h5>
+                
+                    <a class="social-link" href="http://weibo.com/1956184117" target="_blank">
+                        <i class="fa fa-2x fa-weibo"></i>
+                    </a>
+                
+                    <a class="social-link" href="https://github.com/18633847058" target="_blank">
+                        <i class="fa fa-2x fa-github"></i>
+                    </a>
+                
+                    <a class="social-link" href="/atom.xml" target="_blank">
+                        <i class="fa fa-2x fa-rss"></i>
+                    </a>
+                
+            </div>
+            
+
+            
+            <div class="col m9 s12">
+                <h5 class="white-text">友情链接</h5>
+                
+                    <a class="social-link" href="http://raytaylorlin.com/" target="_blank">raytaylorism主题作者的技术博客</a>
+                
+                    <a class="social-link" href="https://github.com/raytaylorlin" target="_blank">Github地址（测试友情链接）</a>
+                
+            </div>
+            
+        </div>
+    </div>
+    
+
+    <div class="footer-copyright pink-link-context">
+        <div class="container">
+            © 2016 example.com, All rights reserved.
+            <p class="right" style="margin-top: 0;">本博客由 <a href="https://hexo.io">Hexo</a> 强力驱动 | 主题 <a href="https://github.com/raytaylorlin/hexo-theme-raytaylorism">raytaylorism</a></p>
+        </div>
+    </div>
+</footer>
+
+
+    <noscript>
+    <div class="noscript">
+        <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+    </div>
+</noscript>
+<div class="noscript">
+    <p class="center-align">当前网速较慢或者你使用的浏览器不支持博客特定功能，请尝试刷新或换用Chrome、Firefox等现代浏览器</p>
+</div>
+
+
+<script src="/js/jquery-2.1.1.min.js"></script>
+<script src="/js/materialize.min.js"></script>
+
+<script>
+    (function($) {
+        $(document).ready(function() {
+            // 隐藏禁用javascript（针对微信内置浏览器）的提示
+            $('.noscript').hide();
+
+            // 图片缩放效果
+            var $imgs = $('img').not('.slider-image').not('.avatar-image').not('.carousel-image').not('.card-cover-image').not('.qrcode');
+
+            // 给图片加上点击放大效果（materialbox插件）
+            $imgs.addClass('materialboxed').each(function(i, el) {
+                $(this).attr('data-caption', $(this).attr('alt') || ' ');
+            }).materialbox();
+
+            // 优化表格的显示
+            $('table').each(function() {
+                var $table = $(this);
+                // 除去多行代码的情况
+                if ($table.find('pre').length == 0) {
+                    $table.addClass('responsive-table striped bordered');
+                }
+            });
+
+            // 首页幻灯片
+            $('.slider').slider({indicators: true, full_width: true, interval: 8000});
+
+            $(".button-collapse").sideNav();
+            $(".category-menu").sideNav();
+
+            // 针对gallery post
+            $('.carousel').carousel({full_width: true});
+            $('.carousel-control.prev').click(function() {
+                $('.carousel').carousel('prev');
+            });
+            $('.carousel-control.next').click(function() {
+                $('.carousel').carousel('next');
+            });
+
+            // 文章目录
+            $('article').not('.simple-article').find('h1').add('h2').add('h3').add('h4').add('h5').add('h6').scrollSpy();
+            // 修正文章目录的left-border颜色
+            var color = $('.table-of-contents-text').css('color');
+            $('.table-of-contents-link').css('border-left-color', color);
+
+            // 针对移动端做的优化：FAB按钮点击一下收回
+            if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                $('.fixed-action-btn').addClass('click-to-toggle');
+            }
+            // 回到顶部
+            $('.btn-return-top').click(function() {
+                $('body, html').animate({
+                    scrollTop: 0
+                }, 500);
+            });
+
+            // 重置读书页面的Tab标签页的颜色
+            $('li.tab a').hover(function() {
+                $(this).toggleClass('text-lighten-4');
+            });
+            $('.indicator').addClass('pink lighten-2');
+
+            
+            // 添加new标签
+            $('.menu-reading').append('<span class="new badge pink"></span>');
+            
+
+            // 搜索功能
+            $('.modal-trigger').leanModal();
+            var searchXml = "search.xml";
+            if (searchXml.length == 0) {
+             	searchXml = "search.xml";
+            }
+            var searchPath = "/" + searchXml;
+            initSearch(searchPath, 'search-input', 'search-result');
+        });
+
+        // 初始化搜索与匹配函数
+        var initSearch = function(path, search_id, content_id) {
+            'use strict';
+            $.ajax({
+                url: path,
+                dataType: "xml",
+                success: function(xmlResponse) {
+                    // get the contents from search data
+                    var datas = $("entry", xmlResponse).map(function() {
+                        return {
+                            title: $("title", this).text(),
+                            content: $("content", this).text(),
+                            url: $("url", this).text()
+                        };
+                    }).get();
+                    var $input = document.getElementById(search_id);
+                    var $resultContent = document.getElementById(content_id);
+                    $input.addEventListener('input', function() {
+                        var str = '<ul class=\"search-result-list\">';
+                        var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+                        $resultContent.innerHTML = "";
+                        if (this.value.trim().length <= 0) {
+                            return;
+                        }
+                        // perform local searching
+                        datas.forEach(function(data) {
+                            var isMatch = true;
+                            var content_index = [];
+                            var data_title = data.title.trim().toLowerCase();
+                            var data_content = data.content.trim().replace(/<[^>]+>/g, "").toLowerCase();
+                            var data_url = data.url;
+                            var index_title = -1;
+                            var index_content = -1;
+                            var first_occur = -1;
+                            // only match artiles with not empty titles and contents
+                            if (data_title != '' && data_content != '') {
+                                keywords.forEach(function(keyword, i) {
+                                    index_title = data_title.indexOf(keyword);
+                                    index_content = data_content.indexOf(keyword);
+                                    if (index_title < 0 && index_content < 0) {
+                                        isMatch = false;
+                                    } else {
+                                        if (index_content < 0) {
+                                            index_content = 0;
+                                        }
+                                        if (i == 0) {
+                                            first_occur = index_content;
+                                        }
+                                    }
+                                });
+                            }
+                            // show search results
+                            if (isMatch) {
+                                keywords.forEach(function(keyword) {
+                                    var regS = new RegExp(keyword, "gi");
+                                    data_title = data_title.replace(regS, "<span class=\"search-keyword pink lighten-2\">" + keyword + "</span>");
+                                });
+
+                                str += "<li><a href='" + data_url + "' class='search-result-title'>" + data_title + "</a>";
+                                var content = data.content.trim().replace(/<[^>]+>/g, "");
+                                if (first_occur >= 0) {
+                                    // cut out 100 characters
+                                    var start = first_occur - 20;
+                                    var end = first_occur + 80;
+                                    if (start < 0) {
+                                        start = 0;
+                                    }
+                                    if (start == 0) {
+                                        end = 100;
+                                    }
+                                    if (end > content.length) {
+                                        end = content.length;
+                                    }
+                                    var match_content = content.substring(start, end);
+                                    // highlight all keywords
+                                    keywords.forEach(function(keyword) {
+                                        var regS = new RegExp(keyword, "gi");
+                                        match_content = match_content.replace(regS, "<span class=\"search-keyword pink lighten-2\">" + keyword + "</span>");
+                                    });
+
+                                    str += "<p class=\"search-result\">..." + match_content + "...</p>"
+                                }
+                                str += "</li>";
+                            }
+                        });
+                        str += "</ul>";
+                        $resultContent.innerHTML = str;
+                    });
+                }
+            });
+        }
+    })(jQuery);
+</script>
+
+
+<script src="/js/prettify.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("pre").addClass("prettyprint");
+        prettyPrint();
+    });
+</script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+<script type="text/javascript" async
+  src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+
+</body>
+</html>
